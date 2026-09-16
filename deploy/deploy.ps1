@@ -25,11 +25,16 @@ if (Test-Path "public") {
 }
 
 Write-Host "[5/5] 서버 재시작" -ForegroundColor Cyan
+
+# 문의 적재 파일은 빌드 산출물 바깥에 둔다. standalone server.js가 자기 디렉터리로
+# chdir하기 때문에, 지정하지 않으면 배포할 때마다 접수된 문의가 사라진다.
+$env:CONTACT_LOG_DIR = Join-Path (Get-Location) "data"
+
 $running = pm2 jlist | ConvertFrom-Json | Where-Object { $_.name -eq "stockdruid" }
 if ($running) {
   pm2 restart stockdruid --update-env
 } else {
-  pm2 start ".next\standalone\server.js" --name stockdruid
+  pm2 start ".next\standalone\server.js" --name stockdruid --update-env
   pm2 save
 }
 

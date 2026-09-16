@@ -1,7 +1,8 @@
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { contactSchema, type ContactResponse } from "@/lib/contact";
+import type { ContactResponse } from "@/lib/contact";
+import { contactSchema } from "@/lib/contact.server";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -13,9 +14,19 @@ function json(body: ContactResponse, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, { status, headers });
 }
 
-/** SMTP가 없어도 문의가 유실되지 않도록 디스크에 남긴다. */
+/**
+ * SMTP가 없어도 문의가 유실되지 않도록 디스크에 남긴다.
+ *
+ * standalone 빌드에서 server.js는 자기 디렉터리로 chdir한다. 따라서 cwd 기준으로 쓰면
+ * 적재 파일이 빌드 산출물(.next/standalone) 안에 들어가고 다음 배포에서 통째로 사라진다.
+ * 운영 시에는 CONTACT_LOG_DIR로 산출물 바깥의 절대 경로를 넘긴다.
+ */
+function logDir() {
+  return process.env.CONTACT_LOG_DIR ?? path.join(process.cwd(), "data");
+}
+
 async function archive(entry: unknown) {
-  const dir = path.join(process.cwd(), "data");
+  const dir = logDir();
   await mkdir(dir, { recursive: true });
   await appendFile(
     path.join(dir, "contact.jsonl"),

@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { contactSchema, type ContactResponse } from "@/lib/contact";
+import {
+  validateContact,
+  type ContactResponse,
+  type FieldErrors,
+} from "@/lib/contact";
 import styles from "./ContactForm.module.css";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -9,23 +13,18 @@ type Status = "idle" | "sending" | "sent" | "error";
 export function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
-  const [fields, setFields] = useState<Record<string, string>>({});
+  const [fields, setFields] = useState<FieldErrors>({});
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (status === "sending") return;
 
     const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form));
+    const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
 
-    const parsed = contactSchema.safeParse(data);
-    if (!parsed.success) {
-      const next: Record<string, string> = {};
-      for (const issue of parsed.error.issues) {
-        const field = String(issue.path[0] ?? "");
-        if (field && !next[field]) next[field] = issue.message;
-      }
-      setFields(next);
+    const errors = validateContact(data);
+    if (Object.keys(errors).length > 0) {
+      setFields(errors);
       setStatus("error");
       setMessage("입력을 확인해 주세요.");
       return;
@@ -39,7 +38,12 @@ export function ContactForm() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify({
+          name: data.name.trim(),
+          email: data.email.trim(),
+          message: data.message.trim(),
+          company: data.company ?? "",
+        }),
       });
       const result: ContactResponse = await response.json();
 

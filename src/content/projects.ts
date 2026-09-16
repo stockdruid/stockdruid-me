@@ -31,7 +31,7 @@ export const projects: Project[] = [
     stack: ["Python", "FastAPI", "PostgreSQL", "Streamlit", "Ollama", "Chroma"],
     hue: 250,
     featured: true,
-    links: {},
+    links: { github: "https://github.com/stockdruid/finai-network-isolation-audit" },
     body: {
       problem:
         "금융권은 망분리 규정과 개인정보 처리 기준을 동시에 만족해야 하는데, 사내 AI 챗봇이 오가는 대화에서 어떤 규정이 어떻게 깨지는지 사람이 일일이 검토할 방법이 없었다. 규정 문서는 수백 개 요구사항으로 흩어져 있고, 로그는 계속 쌓인다.",
@@ -113,7 +113,7 @@ export const projects: Project[] = [
     period: "2026.04",
     stack: ["Python", "PyQt6", "JSON"],
     hue: 20,
-    links: {},
+    links: { github: "https://github.com/stockdruid/ReportAnalysis" },
     body: {
       problem:
         "CAPEv2가 뱉는 리포트는 JSON 수천 줄인데, 분석가가 실제로 보고 싶은 건 행위 시퀀스 몇 개다. 기본 웹 UI로는 샘플 간 비교가 안 되고 중요한 신호가 노이즈에 묻힌다.",
@@ -144,7 +144,7 @@ export const projects: Project[] = [
     period: "2026.04 – 2026.05",
     stack: ["C++20", "Socket", "Multithreading"],
     hue: 160,
-    links: {},
+    links: { github: "https://github.com/stockdruid/ServicePortScanner" },
     body: {
       problem:
         "포트 번호만 알려주는 스캐너는 실무에서 쓸모가 제한적이다. 3306이 열려 있다는 사실보다 거기 붙은 게 정말 MySQL인지가 중요하다.",

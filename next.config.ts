@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
 
+  // 문의 적재 파일이 빌드 산출물에 복사되지 않게 한다
+  outputFileTracingExcludes: {
+    "*": ["./data/**"],
+  },
+
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

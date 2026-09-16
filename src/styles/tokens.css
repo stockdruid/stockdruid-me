@@ -13,17 +13,17 @@
   --surface-border: oklch(0% 0 0 / 0.08);
   --surface-border-strong: oklch(0% 0 0 / 0.14);
 
-  /* Text */
+  /* Text — 모든 값이 surface-base/sunken 위에서 4.5:1 이상 */
   --text-primary: oklch(20% 0.01 260);
-  --text-secondary: oklch(52% 0.012 260);
-  --text-tertiary: oklch(66% 0.01 260);
+  --text-secondary: oklch(45% 0.012 260);
+  --text-tertiary: oklch(54% 0.01 260);
   --text-on-accent: oklch(100% 0 0);
 
-  /* Accent — exactly one */
-  --accent: oklch(62% 0.19 250);
-  --accent-hover: oklch(56% 0.2 250);
-  --accent-soft: oklch(62% 0.19 250 / 0.12);
-  --accent-ring: oklch(62% 0.19 250 / 0.4);
+  /* Accent — 단 하나. 명도는 흰 글씨 대비 4.5:1을 만족하는 상한에 맞췄다. */
+  --accent: oklch(55% 0.19 250);
+  --accent-hover: oklch(48% 0.2 250);
+  --accent-soft: oklch(55% 0.19 250 / 0.12);
+  --accent-ring: oklch(55% 0.19 250 / 0.4);
 
   /* Atmosphere — hero mesh */
   --mesh-a: oklch(78% 0.14 250 / 0.5);
@@ -31,8 +31,12 @@
   --mesh-c: oklch(86% 0.1 310 / 0.35);
 
   /* Typography */
-  --font-body: var(--font-inter), "Pretendard Variable", Pretendard,
-    -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /*
+   * Pretendard 단독. 라틴 글리프도 함께 담고 있어 별도 영문 서체를 얹을 이유가 없다.
+   * Inter를 같이 실었더니 쓰이지도 않는 woff2 47KB가 크리티컬 패스에 올랐다.
+   */
+  --font-body: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
   --text-hero: clamp(2.75rem, 1.2rem + 6.5vw, 6.5rem);
@@ -93,7 +97,7 @@
 
     --text-primary: oklch(96% 0.004 260);
     --text-secondary: oklch(72% 0.01 260);
-    --text-tertiary: oklch(56% 0.01 260);
+    --text-tertiary: oklch(62% 0.01 260);
 
     --accent: oklch(72% 0.16 250);
     --accent-hover: oklch(78% 0.15 250);

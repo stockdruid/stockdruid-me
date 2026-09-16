@@ -1,3 +1,9 @@
+/*
+ * 폰트 @font-face를 앱 CSS 번들에 합친다.
+ * 별도 <link>로 두면 render-blocking 요청이 하나 더 생긴다. 모든 face가
+ * font-display: swap 이라 폰트 자체는 첫 페인트를 막지 않는다.
+ */
+@import "../../public/fonts/pretendard.css";
 @import "../styles/tokens.css";
 
 *,

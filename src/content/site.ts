@@ -8,7 +8,7 @@ export const site = {
   tagline: ["보안과 AI 사이를", "오가며 만드는", "개발자"],
   summary:
     "악성코드 분석 도구부터 금융권 컴플라이언스 진단 시스템까지, 문제의 형태에 맞는 도구를 골라 만듭니다. 팀 프로젝트에서는 주로 백엔드와 인프라를 맡습니다.",
-  email: "yerme0212@gmail.com",
+  email: "clef1733@gmail.com",
   links: {
     github: "https://github.com/stockdruid",
     // TODO: LinkedIn 계정 있으면 채우기, 없으면 이 줄 삭제
