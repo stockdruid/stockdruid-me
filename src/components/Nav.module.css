@@ -6,7 +6,7 @@
   z-index: 50;
   display: flex;
   justify-content: center;
-  padding: 1rem var(--space-gutter);
+  padding: 0.7rem var(--space-gutter);
   pointer-events: none;
 }
 
@@ -22,7 +22,7 @@
   gap: clamp(0.5rem, 2vw, 1.5rem);
   width: 100%;
   max-width: var(--shell-max);
-  padding: 0.45rem 0.45rem 0.45rem 1.1rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.9rem;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: transparent;
@@ -49,7 +49,7 @@
 }
 
 .condensed {
-  max-width: 780px;
+  max-width: 700px;
   background: var(--glass-strong);
   border-color: var(--glass-border);
   box-shadow: var(--bevel), var(--shadow-rest);
@@ -87,7 +87,7 @@
 .link {
   position: relative;
   display: block;
-  padding: 0.45rem 0.95rem;
+  padding: 0.35rem 0.8rem;
   font-size: var(--text-small);
   font-weight: 600;
   color: var(--text-secondary);
@@ -118,7 +118,7 @@
 .cta {
   position: relative;
   overflow: hidden;
-  padding: 0.55rem 1.25rem;
+  padding: 0.45rem 1rem;
   font-size: var(--text-small);
   font-weight: 700;
   white-space: nowrap;

@@ -18,7 +18,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6.5rem;
+  scroll-padding-top: 5.2rem;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -125,7 +125,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.9rem 0.35rem 0.75rem;
+  padding: 0.28rem 0.8rem 0.28rem 0.62rem;
   font-size: var(--text-micro);
   font-weight: 700;
   letter-spacing: var(--tracking-wide);
