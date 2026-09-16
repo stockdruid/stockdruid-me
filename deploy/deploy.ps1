@@ -26,9 +26,26 @@ if (Test-Path "public") {
 
 Write-Host "[5/5] 서버 재시작" -ForegroundColor Cyan
 
-# 문의 적재 파일은 빌드 산출물 바깥에 둔다. standalone server.js가 자기 디렉터리로
-# chdir하기 때문에, 지정하지 않으면 배포할 때마다 접수된 문의가 사라진다.
-$env:CONTACT_LOG_DIR = Join-Path (Get-Location) "data"
+# standalone 빌드의 server.js 는 자기 디렉터리로 chdir 하므로 프로젝트 루트의
+# .env.local 을 읽지 못한다. 여기서 직접 읽어 프로세스 환경에 주입한다.
+$envFile = Join-Path (Get-Location) ".env.local"
+if (Test-Path $envFile) {
+  Get-Content $envFile | ForEach-Object {
+    $line = $_.Trim()
+    if ($line -and -not $line.StartsWith("#") -and $line.Contains("=")) {
+      $i = $line.IndexOf("=")
+      $key = $line.Substring(0, $i).Trim()
+      $val = $line.Substring($i + 1).Trim()
+      if ($key) { [Environment]::SetEnvironmentVariable($key, $val, "Process") }
+    }
+  }
+  Write-Host "  .env.local 반영" -ForegroundColor DarkGray
+}
+
+# 문의 적재 파일은 빌드 산출물 바깥에 둔다. 지정하지 않으면 배포할 때마다 사라진다.
+if (-not $env:CONTACT_LOG_DIR) {
+  $env:CONTACT_LOG_DIR = Join-Path (Get-Location) "data"
+}
 
 $running = pm2 jlist | ConvertFrom-Json | Where-Object { $_.name -eq "stockdruid" }
 if ($running) {

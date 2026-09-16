@@ -24,12 +24,19 @@
   gap: 0.5rem;
 }
 
+/* 앵커와 버튼이 같은 모양이어야 한다. 버튼 기본 스타일을 지운다. */
 .channel {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
   padding: 0.9rem 1.1rem;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  cursor: pointer;
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-sm);
   transition:
@@ -53,10 +60,33 @@
 }
 
 .channelValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
   font-size: var(--text-small);
   font-weight: 520;
   word-break: break-all;
   text-align: right;
+}
+
+/* 항상 보인다. hover에만 나타나면 터치 기기에서 복사 가능한지 알 수 없다. */
+.copyHint {
+  flex-shrink: 0;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-tertiary);
+  transition: color var(--dur-fast) var(--ease-ios);
+}
+
+.channel:hover .copyHint,
+.channel:focus-visible .copyHint,
+.channel[data-state="copied"] .copyHint {
+  color: var(--accent);
+}
+
+.channel[data-state="failed"] .copyHint {
+  color: oklch(52% 0.2 25);
 }
 
 .panel {

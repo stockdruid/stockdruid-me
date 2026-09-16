@@ -4,15 +4,19 @@ export const site = {
   name: "stockdruid",
   // TODO: 실명 쓸지 핸들만 쓸지 정하기
   displayName: "stockdruid",
-  role: "Backend / Security Engineer",
-  tagline: ["보안과 AI 사이를", "오가며 만드는", "개발자"],
+  role: "Security / Backend Engineer",
+  tagline: ["악성코드를 뜯어보고", "망분리 위반을 잡는", "백엔드 개발자"],
   summary:
-    "악성코드 분석 도구부터 금융권 컴플라이언스 진단 시스템까지, 문제의 형태에 맞는 도구를 골라 만듭니다. 팀 프로젝트에서는 주로 백엔드와 인프라를 맡습니다.",
+    "CAPE 샌드박스 리포트에서 악성코드 행위를 추려내는 분석 도구를 만들었고, 금융권 챗봇 로그에서 망분리와 개인정보 규정 위반을 찾아내는 진단 시스템을 설계했습니다. 팀 프로젝트에서는 백엔드와 데이터 모델을 맡습니다.",
   email: "clef1733@gmail.com",
   links: {
     github: "https://github.com/stockdruid",
     // TODO: LinkedIn 계정 있으면 채우기, 없으면 이 줄 삭제
     linkedin: "",
+  },
+  /** 링크로 열 수 없는 연락처. 클릭하면 복사된다. */
+  handles: {
+    discord: "@stockdruid",
   },
 } as const;
 
@@ -33,11 +37,36 @@ export type SkillGroup = {
  */
 export const skills: SkillGroup[] = [
   {
+    group: "Security",
+    items: [
+      {
+        name: "악성코드 분석",
+        context: "CAPEv2 샌드박스 리포트 파싱, 행위 시퀀스 추출, 샘플 비교",
+      },
+      {
+        name: "네트워크 스캐닝",
+        context: "배너 수집 기반 서비스 식별, 스레드 풀 동시성 제어",
+      },
+      {
+        name: "컴플라이언스 진단",
+        context: "ISMS-P 요구사항 268건 매핑, 망분리 위반 탐지 룰 설계",
+      },
+      {
+        name: "개인정보 처리",
+        context: "PII 필드 정규화, 위험도 산정 체계 구현",
+      },
+      {
+        name: "보안 설계",
+        context: "권한 게이팅 정책, 공격 표면 축소, 시크릿 관리",
+      },
+    ],
+  },
+  {
     group: "Languages",
     items: [
       { name: "Python", context: "악성코드 분석 GUI, 컴플라이언스 진단 백엔드" },
-      { name: "TypeScript", context: "Next.js 대시보드, Electron 데스크탑 앱" },
-      { name: "C++20", context: "service-aware 포트 스캐너" },
+      { name: "C++20", context: "서비스 식별 포트 스캐너" },
+      { name: "TypeScript", context: "대시보드, 데스크탑 앱, 이 사이트" },
       { name: "SQL", context: "PostgreSQL 스키마 설계, 정규화 마이그레이션" },
     ],
   },
@@ -46,24 +75,18 @@ export const skills: SkillGroup[] = [
     items: [
       { name: "FastAPI", context: "진단 API, 판정 인터페이스" },
       { name: "PostgreSQL", context: "단일 진실원 테이블 설계, alembic 마이그레이션" },
-      { name: "Node.js", context: "의존성 없는 파일 기반 백엔드" },
+      { name: "Node.js", context: "외부 의존성 없는 파일 기반 백엔드" },
       { name: "Streamlit", context: "컴플라이언스 대시보드" },
-    ],
-  },
-  {
-    group: "Security",
-    items: [
-      { name: "Malware Analysis", context: "CAPEv2 리포트 구조 분석·시각화" },
-      { name: "Network Scanning", context: "서비스 식별 기반 포트 스캐너 설계" },
-      { name: "Compliance", context: "ISMS-P 매핑, 망분리 위반 탐지 룰" },
     ],
   },
   {
     group: "AI",
     items: [
-      { name: "LLM Orchestration", context: "5개 프로바이더 추상화, 역할별 에이전트 팀" },
+      {
+        name: "로컬 추론",
+        context: "망분리 환경에서 외부 반출 없이 Ollama로 로그 분석",
+      },
       { name: "RAG", context: "Chroma 기반 정책 문서 검색" },
-      { name: "Ollama", context: "로컬 모델 추론, 망분리 환경 대응" },
     ],
   },
 ];

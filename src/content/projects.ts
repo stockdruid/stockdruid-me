@@ -7,7 +7,7 @@ export type Project = {
   stack: string[];
   /** public/ 기준 경로. 없으면 카드가 생성 그라디언트로 대체한다. */
   thumbnail?: string;
-  /** 카드 폴백 그라디언트 색상각 (0–360) */
+  /** 카드 폴백 그라디언트 색상각 (0~360) */
   hue: number;
   featured?: boolean;
   links: { github?: string; demo?: string };
@@ -27,7 +27,7 @@ export const projects: Project[] = [
     tagline:
       "금융권 AI 챗봇 로그에서 망분리·개인정보 규정 위반을 자동으로 잡아내는 진단 엔진",
     role: "백엔드 · DB 스키마 · 대시보드",
-    period: "2026.05 – 2026.07",
+    period: "2026.05 ~ 2026.07",
     stack: ["Python", "FastAPI", "PostgreSQL", "Streamlit", "Ollama", "Chroma"],
     hue: 250,
     featured: true,
@@ -38,7 +38,7 @@ export const projects: Project[] = [
       contribution: [
         "챗봇 로그를 단일 진실원으로 삼는 PostgreSQL 스키마를 v1부터 v4까지 설계·마이그레이션",
         "정책팀이 XLSX로 관리하던 컴플라이언스 매핑을 공통통제 25종 / Detector 12종 / 요구사항 268건의 정규화 테이블로 이관",
-        "개인정보 필드 정규화 리졸버 구현 — 정확 일치 → 별칭 사전 → 키워드 fallback 3단계",
+        "개인정보 필드 정규화 리졸버 구현. 정확 일치, 별칭 사전, 키워드 fallback 3단계",
         "ISMS-P 판정 API(개별 PATCH + 배치 bulk-verdict)와 Streamlit 대시보드 실데이터 연동",
       ],
       decisions: [
@@ -81,7 +81,7 @@ export const projects: Project[] = [
         "다섯 개 프로바이더를 단일 추상화로 묶고 usage를 정규화해 할당량 대시보드 구현",
         "개발팀 / 검증팀 역할 분리와 감시자 페르소나 설계",
         "PC 접근을 safe · elevated · forbidden 3단계 정책으로 게이팅",
-        "볼트 자동 기록 — 덮어쓰기 전 자동 백업 + 저장 전 diff 확인",
+        "볼트 자동 기록. 덮어쓰기 전 백업하고 저장 전에 diff 확인",
       ],
       decisions: [
         {
@@ -102,7 +102,7 @@ export const projects: Project[] = [
         },
       ],
       outcome:
-        "P0~P5 전 단계 완료. 프로바이더를 갈아끼워도 대시보드는 그대로 동작하고, 리뷰 통과율이 자가리뷰 때보다 유의미하게 떨어졌다 — 즉 리뷰가 실제로 걸러내고 있다는 뜻.",
+        "P0~P5 전 단계 완료. 프로바이더를 갈아끼워도 대시보드는 그대로 동작하고, 리뷰 통과율이 자가리뷰 때보다 유의미하게 떨어졌다. 리뷰가 실제로 걸러내고 있다는 뜻이다.",
     },
   },
   {
@@ -141,7 +141,7 @@ export const projects: Project[] = [
     title: "Service Port Scanner",
     tagline: "열린 포트가 아니라 '무슨 서비스가 떠 있는지'를 말해주는 C++20 스캐너",
     role: "7인 팀 · 설계 및 구현 참여",
-    period: "2026.04 – 2026.05",
+    period: "2026.04 ~ 2026.05",
     stack: ["C++20", "Socket", "Multithreading"],
     hue: 160,
     links: { github: "https://github.com/stockdruid/ServicePortScanner" },
@@ -150,7 +150,7 @@ export const projects: Project[] = [
         "포트 번호만 알려주는 스캐너는 실무에서 쓸모가 제한적이다. 3306이 열려 있다는 사실보다 거기 붙은 게 정말 MySQL인지가 중요하다.",
       contribution: [
         "서비스 배너 수집과 지문 매칭 로직 설계",
-        "스캔 동시성 제어 — 스레드 풀과 타임아웃 정책",
+        "스캔 동시성 제어. 스레드 풀과 타임아웃 정책 설계",
         "7인 팀 기획 발표 대본 작성 및 발표",
       ],
       decisions: [
@@ -169,7 +169,7 @@ export const projects: Project[] = [
   {
     slug: "safety-inspection",
     title: "안전보건 순회점검 시스템",
-    tagline: "현장에서 폰으로 바로 등록하는 점검 웹앱 — 외부 의존성 없는 Node 백엔드",
+    tagline: "현장에서 폰으로 바로 등록하는 점검 웹앱. 외부 의존성 없는 Node 백엔드",
     role: "단독 개발",
     period: "2026.09",
     stack: ["Node.js", "Vanilla JS", "Claude Vision API"],
@@ -181,7 +181,7 @@ export const projects: Project[] = [
       contribution: [
         "점검 항목을 리치 객체로 재설계하고 법적 근거를 함께 보관",
         "옵션 CRUD API와 인라인 항목 추가 UI 구현",
-        "사진 분석 엔드포인트 — Claude Vision으로 현장 사진에서 위험요인 추출",
+        "사진 분석 엔드포인트 구현. Claude Vision으로 현장 사진에서 위험요인 추출",
         "비전문가용 자체 서버 설치·실행 매뉴얼 작성",
       ],
       decisions: [

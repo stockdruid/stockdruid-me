@@ -1,5 +1,6 @@
 import { site } from "@/content/site";
 import { ContactForm } from "./ContactForm";
+import { CopyHandle } from "./CopyHandle";
 import { Reveal } from "./Reveal";
 import styles from "./Contact.module.css";
 
@@ -10,6 +11,9 @@ const channels = [
     ? [{ label: "LinkedIn", value: "프로필 보기", href: site.links.linkedin }]
     : []),
 ];
+
+/** 링크가 없어 복사만 되는 연락처 */
+const handles = [{ label: "Discord", value: site.handles.discord }];
 
 export function Contact() {
   return (
@@ -50,6 +54,11 @@ export function Contact() {
                       <span className={styles.channelLabel}>{channel.label}</span>
                       <span className={styles.channelValue}>{channel.value}</span>
                     </a>
+                  </li>
+                ))}
+                {handles.map((handle) => (
+                  <li key={handle.label}>
+                    <CopyHandle label={handle.label} value={handle.value} />
                   </li>
                 ))}
               </ul>
