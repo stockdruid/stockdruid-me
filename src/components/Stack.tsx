@@ -13,11 +13,11 @@ export function Stack() {
         <Reveal index={1}>
           <div className={styles.head}>
             <h2 className={styles.heading}>
-              써봤다고 말할 수 있는 것만<br />적었습니다
+              실제로 사용해 본 기술들
             </h2>
             <p className={styles.note}>
-              이름만 나열하면 검증할 수가 없습니다. 각 항목 아래에 실제로 어디에
-              썼는지를 같이 적었습니다.
+              이름만 적어 두면 어느 정도로 다루는지 알기 어렵다고 생각하여, 각
+              항목마다 어떤 작업에 사용했는지를 함께 적었습니다.
             </p>
           </div>
         </Reveal>

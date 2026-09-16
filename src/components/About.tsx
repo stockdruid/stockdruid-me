@@ -13,7 +13,7 @@ export function About() {
         <Reveal index={1}>
           <div className={styles.prose}>
             <h2 className={styles.heading}>
-              만든 것으로 설명하는 편이<br />빠릅니다.
+              그동안 만들어 온 것들
             </h2>
             {aboutParagraphs.map((text, i) => (
               <p key={i} className={styles.paragraph}>
@@ -24,7 +24,7 @@ export function About() {
         </Reveal>
 
         <Reveal index={2}>
-          <h3 className={styles.subheading}>일할 때 지키는 것</h3>
+          <h3 className={styles.subheading}>작업할 때 지키려고 하는 것들</h3>
         </Reveal>
 
         <ul className={styles.principles}>
@@ -37,7 +37,7 @@ export function About() {
                 <h4 className={styles.principleTitle}>{item.title}</h4>
                 <p className={styles.principleBody}>{item.body}</p>
                 <p className={styles.evidence}>
-                  <span className={styles.evidenceLabel}>실제로</span>
+                  <span className={styles.evidenceLabel}>사례</span>
                   {item.evidence}
                 </p>
               </article>

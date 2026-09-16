@@ -14,11 +14,11 @@ export function Projects() {
         <Reveal index={1}>
           <div className={styles.head}>
             <h2 className={styles.heading}>
-              무엇을 썼는지보다<br />왜 그걸 골랐는지
+              프로젝트에서 내린 선택들
             </h2>
             <p className={styles.note}>
-              각 프로젝트의 상세 페이지에는 기술 선택의 이유와 그때 포기한 것이
-              함께 적혀 있습니다.
+              상세 페이지에는 어떤 기술을 선택했는지와 그 이유, 그리고 그 선택으로
+              무엇을 포기했는지를 함께 적어 두었습니다.
             </p>
           </div>
         </Reveal>

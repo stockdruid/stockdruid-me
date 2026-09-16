@@ -27,13 +27,14 @@ export function Contact() {
           <div>
             <Reveal index={0}>
               <h2 className={styles.heading}>
-                같이 만들 게 있다면<br />편하게 보내주세요.
+                연락은 편하게 주시면 됩니다
               </h2>
             </Reveal>
 
             <Reveal index={1}>
               <p className={styles.note}>
-                채용, 협업, 프로젝트 문의 모두 환영합니다. 보통 하루 안에 답장합니다.
+                채용이나 협업, 프로젝트와 관련한 문의를 환영합니다. 확인하는 대로
+                답장드리겠습니다.
               </p>
             </Reveal>
 

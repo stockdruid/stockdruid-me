@@ -130,14 +130,14 @@ export default async function ProjectPage({ params }: Params) {
           <div className={`shell ${styles.content}`}>
             <Reveal>
               <section className={styles.block}>
-                <h2 className={styles.blockTitle}>문제</h2>
+                <h2 className={styles.blockTitle}>문제 상황</h2>
                 <p className={styles.prose}>{project.body.problem}</p>
               </section>
             </Reveal>
 
             <Reveal index={1}>
               <section className={styles.block}>
-                <h2 className={styles.blockTitle}>내가 한 일</h2>
+                <h2 className={styles.blockTitle}>맡은 부분</h2>
                 <ul className={styles.list}>
                   {project.body.contribution.map((item) => (
                     <li key={item} className={styles.listItem}>
@@ -150,7 +150,7 @@ export default async function ProjectPage({ params }: Params) {
 
             <Reveal index={2}>
               <section className={styles.block}>
-                <h2 className={styles.blockTitle}>기술 선택과 이유</h2>
+                <h2 className={styles.blockTitle}>기술 선택</h2>
                 <div className={styles.decisions}>
                   {project.body.decisions.map((decision, i) => (
                     <div key={decision.choice} className={styles.decision}>
