@@ -66,9 +66,10 @@ SMTP 환경변수가 설정되어 있으면 메일을 보내고, 없으면 `CONT
 
 방어 장치:
 
-- 허니팟 `company` 필드 — 채워져 오면 조용히 성공 응답하고 버린다
-- IP당 시간당 5회 제한 (`CF-Connecting-IP` 헤더 기준)
+- 허니팟 `company` 필드. 채워져 오면 조용히 성공 응답하고 버린다
+- IP당 시간당 5회 제한 (`CF-Connecting-IP` 헤더 기준). 위조 헤더는 Cloudflare 엣지가 403으로 차단하는 것을 실측 확인
 - 본문 16KB 상한, zod 스키마 검증
+- `name`·`email` 의 제어 문자(CRLF 포함) 거부. 두 값은 메일 Subject·Reply-To 로 조립되므로 헤더 인젝션의 입구가 된다
 
 레이트 리밋은 프로세스 메모리에 있다. 다중 인스턴스로 가면 외부 저장소로 옮겨야 한다.
 
@@ -147,5 +148,6 @@ FCP 3.9s · LCP 5.0s · CLS 0 · TBT 10ms. 전송량 620KB 중 **419KB가 한글
 
 - PC가 꺼지면 사이트도 내려간다. 가용성이 필요해지면 정적 빌드본을 Cloudflare Pages에 폴백으로 올린다.
 - 페이지 간 이동은 의도적으로 전체 문서 내비게이션이다. `next/link` 의 클라이언트 라우팅으로는 네이티브 cross-document View Transition이 발동하지 않는다. 모든 페이지가 정적이라 프리페치를 포기한 비용은 작다.
-- CSP 헤더는 아직 설정하지 않았다. 나머지 보안 헤더(HSTS, nosniff, frame-deny, referrer, permissions)는 `next.config.ts` 에 있다.
+- CSP 헤더는 아직 설정하지 않았다. 나머지 보안 헤더(HSTS, nosniff, frame-deny, referrer, permissions)는 `next.config.ts` 에 있다. 현재 사용자 입력이 DOM 으로 렌더링되는 경로가 없어 XSS 표면 자체는 없다.
+- HTTP 로 들어온 요청은 Cloudflare 의 "항상 HTTPS 사용" 설정이 301 로 돌린다. 앱이 아니라 엣지에서 처리한다.
 - 한글 웹폰트가 전송량의 3분의 2를 차지한다. 위 **측정치** 참고.
