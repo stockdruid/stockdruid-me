@@ -1,0 +1,185 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised-solid);
+  box-shadow: var(--shadow-rest);
+  transition:
+    transform var(--dur-normal) var(--ease-ios),
+    box-shadow var(--dur-normal) var(--ease-ios),
+    border-color var(--dur-normal) var(--ease-ios);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--surface-border-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+.card:has(.hit:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 카드 전체를 클릭 영역으로. 내부 링크가 없으므로 중첩 문제 없음. */
+.hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+/* ---- Media ---- */
+
+.media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.image,
+.placeholder {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-ios);
+  will-change: transform;
+}
+
+.card:hover .image,
+.card:hover .placeholder {
+  transform: scale(1.06) translateY(-2%);
+}
+
+.placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(
+      120% 120% at 20% 0%,
+      oklch(72% 0.17 var(--hue) / 0.55),
+      transparent 60%
+    ),
+    radial-gradient(
+      100% 100% at 100% 100%,
+      oklch(66% 0.15 calc(var(--hue) + 45) / 0.5),
+      transparent 55%
+    ),
+    var(--surface-sunken);
+}
+
+.placeholderNum {
+  font-family: var(--font-mono);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 300;
+  color: var(--text-primary);
+  opacity: 0.16;
+  letter-spacing: -0.04em;
+}
+
+/* ---- Body ---- */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: clamp(1.25rem, 0.8rem + 1.4vw, 1.9rem);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--text-micro);
+  color: var(--text-tertiary);
+  margin-bottom: 0.7rem;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.title {
+  font-size: clamp(1.125rem, 0.95rem + 0.7vw, 1.5rem);
+  line-height: var(--leading-snug);
+  margin-bottom: 0.55rem;
+}
+
+.tagline {
+  font-size: var(--text-small);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 1.1rem;
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.25rem;
+}
+
+.tag {
+  padding: 0.22rem 0.6rem;
+  font-size: var(--text-micro);
+  font-weight: 520;
+  color: var(--text-secondary);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-pill);
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  font-size: var(--text-small);
+  font-weight: 560;
+  color: var(--accent);
+}
+
+.arrow {
+  transition: transform var(--dur-normal) var(--ease-spring);
+}
+
+.card:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* ---- Featured ---- */
+
+.featured {
+  grid-column: span 2;
+}
+
+.featured .media {
+  aspect-ratio: 21 / 9;
+}
+
+.featured .title {
+  font-size: clamp(1.4rem, 1rem + 1.4vw, 2.125rem);
+}
+
+.featured .tagline {
+  font-size: var(--text-body);
+  max-width: 58ch;
+}
+
+@media (max-width: 900px) {
+  .featured {
+    grid-column: span 1;
+  }
+
+  .featured .media {
+    aspect-ratio: 16 / 9;
+  }
+}

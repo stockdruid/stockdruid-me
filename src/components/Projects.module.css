@@ -1,0 +1,47 @@
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-block: var(--space-block) calc(var(--space-block) * 0.9);
+}
+
+.heading {
+  font-size: var(--text-title);
+}
+
+.note {
+  max-width: 34ch;
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
+}
+
+/* 그리드 자식은 Reveal 래퍼다 — 카드가 행 높이를 채우도록 흘려보낸다 */
+.grid > * {
+  display: flex;
+}
+
+.grid > * > * {
+  flex: 1;
+}
+
+.spanTwo {
+  grid-column: span 2;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spanTwo {
+    grid-column: span 1;
+  }
+}

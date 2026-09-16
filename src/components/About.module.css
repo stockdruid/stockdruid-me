@@ -1,0 +1,93 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+  margin-top: var(--space-block);
+  align-items: start;
+}
+
+.heading {
+  font-size: var(--text-title);
+  margin-bottom: 1.75rem;
+}
+
+.paragraph {
+  max-width: var(--measure);
+  color: var(--text-secondary);
+  margin-bottom: 1.15rem;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* 스킬 패널 — 스크롤과 함께 따라붙되 모바일에선 해제 */
+.skills {
+  display: grid;
+  gap: 0.75rem;
+  position: sticky;
+  top: 6.5rem;
+}
+
+.group {
+  padding: 1.35rem 1.5rem;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  box-shadow: var(--shadow-rest);
+  transition:
+    transform var(--dur-normal) var(--ease-ios),
+    box-shadow var(--dur-normal) var(--ease-ios),
+    border-color var(--dur-normal) var(--ease-ios);
+}
+
+.group:hover {
+  transform: translateY(-3px);
+  border-color: var(--surface-border-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+.groupTitle {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-bottom: 0.9rem;
+}
+
+.items {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.item {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.itemName {
+  font-size: var(--text-small);
+  font-weight: 580;
+}
+
+.itemContext {
+  font-size: var(--text-micro);
+  line-height: 1.5;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills {
+    position: static;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
