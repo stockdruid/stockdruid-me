@@ -8,7 +8,7 @@ export const site = {
   tagline: ["악성코드를 뜯어보고", "망분리 위반을 잡는", "백엔드 개발자"],
   summary:
     "CAPE 샌드박스 리포트에서 악성코드 행위를 추려내는 분석 도구를 만들었고, 금융권 챗봇 로그에서 망분리와 개인정보 규정 위반을 찾아내는 진단 시스템을 설계했습니다. 팀 프로젝트에서는 백엔드와 데이터 모델을 맡습니다.",
-  email: "clef1733@gmail.com",
+  email: "me@stockdruid.me",
   links: {
     github: "https://github.com/stockdruid",
     // TODO: LinkedIn 계정 있으면 채우기, 없으면 이 줄 삭제

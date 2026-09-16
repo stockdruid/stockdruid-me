@@ -18,13 +18,35 @@
 
 html {
   scroll-behavior: smooth;
-  /* Nav is fixed; anchor targets need clearance. */
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 6.5rem;
   -webkit-text-size-adjust: 100%;
 }
 
+/*
+ * 하늘. 위는 짙은 하늘색, 아래로 갈수록 옅어진다.
+ * fixed 배경이라 스크롤해도 하늘은 그대로 있고 콘텐츠만 떠서 흐른다.
+ */
 body {
-  background: var(--surface-base);
+  background:
+    radial-gradient(
+      120% 70% at 78% 8%,
+      oklch(100% 0 0 / 0.65) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 55% at 12% 22%,
+      oklch(100% 0 0 / 0.45) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--sky-high) 0%,
+      var(--sky-mid) 38%,
+      var(--sky-low) 72%,
+      var(--sky-low) 100%
+    );
+  background-attachment: fixed;
+  background-color: var(--sky-low);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -32,11 +54,9 @@ body {
   letter-spacing: var(--tracking-normal);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* 한글은 어절 단위로 끊는다. 기본값은 단어 중간에서 줄을 바꾼다. */
   word-break: keep-all;
   overflow-wrap: break-word;
   min-height: 100dvh;
-  /* clip 사용. hidden은 스크롤 컨테이너를 만들어 자식의 position: sticky를 무력화한다. */
   overflow-x: clip;
 }
 
@@ -46,7 +66,7 @@ h3,
 h4 {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
-  font-weight: 640;
+  font-weight: 700;
   text-wrap: balance;
 }
 
@@ -74,17 +94,18 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--aqua);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 ::selection {
-  background: var(--accent-soft);
+  background: var(--aqua-soft);
   color: var(--text-primary);
 }
 
-/* Shared layout shell */
+/* ---- 공용 레이아웃 ---- */
+
 .shell {
   width: 100%;
   max-width: var(--shell-max);
@@ -97,22 +118,37 @@ textarea {
   position: relative;
 }
 
+/*
+ * 섹션 라벨. Aero 답게 작은 유리 알약으로 만든다.
+ */
 .sectionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.75rem;
   font-size: var(--text-micro);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--text-tertiary);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  color: var(--aqua-deep);
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(150%);
 }
 
-.sectionLabel::after {
+/* 라벨 앞의 작은 물방울 */
+.sectionLabel::before {
   content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--surface-border);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, oklch(100% 0 0 / 0.95), transparent 45%),
+    var(--grad-aqua);
+  box-shadow: 0 1px 2px oklch(45% 0.1 245 / 0.5);
 }
 
 .visuallyHidden {
@@ -126,7 +162,34 @@ textarea {
   border: 0;
 }
 
-/* Motion is a flourish, never a barrier. */
+/*
+ * 유리 패널 공통. Aero 의 기본 단위다.
+ * ::before 로 상단 광택을 덮어 두께를 만든다.
+ */
+.glass {
+  position: relative;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  isolation: isolate;
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 52%;
+  border-radius: inherit;
+  border-end-start-radius: 50% 100%;
+  border-end-end-radius: 50% 100%;
+  background: var(--gloss);
+  pointer-events: none;
+  z-index: -1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -142,7 +205,6 @@ textarea {
   }
 }
 
-/* Cross-document view transitions between landing and project detail */
 @view-transition {
   navigation: auto;
 }
@@ -150,5 +212,5 @@ textarea {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--dur-normal);
-  animation-timing-function: var(--ease-ios);
+  animation-timing-function: var(--ease-glass);
 }

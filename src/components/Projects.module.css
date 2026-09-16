@@ -9,12 +9,21 @@
 
 .heading {
   font-size: var(--text-title);
+  color: var(--text-primary);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.65);
 }
 
 .note {
   max-width: 34ch;
   font-size: var(--text-small);
   color: var(--text-secondary);
+  padding: 0.85rem 1.1rem;
+  background: var(--glass-faint);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--bevel);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
 }
 
 .grid {
@@ -23,7 +32,7 @@
   gap: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
 }
 
-/* 그리드 자식은 Reveal 래퍼다 — 카드가 행 높이를 채우도록 흘려보낸다 */
+/* 그리드 자식은 Reveal 래퍼다. 카드가 행 높이를 채우도록 흘려보낸다 */
 .grid > * {
   display: flex;
 }

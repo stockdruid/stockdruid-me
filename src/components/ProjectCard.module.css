@@ -1,43 +1,63 @@
+/*
+ * Aero 유리 타일.
+ * 카드 자체가 물에 젖은 유리판이다. 상단 광택, 안쪽 림, 아래쪽 푸른 그림자.
+ */
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  background: var(--surface-raised-solid);
-  box-shadow: var(--shadow-rest);
+  background: var(--glass-strong);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(165%);
+  isolation: isolate;
   transition:
-    transform var(--dur-normal) var(--ease-ios),
-    box-shadow var(--dur-normal) var(--ease-ios),
-    border-color var(--dur-normal) var(--ease-ios);
+    transform var(--dur-normal) var(--ease-glass),
+    box-shadow var(--dur-normal) var(--ease-glass),
+    filter var(--dur-normal) var(--ease-glass);
+}
+
+/* 카드 전체를 덮는 광택. 위쪽 절반만 밝다 */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 46%;
+  border-radius: var(--radius-lg) var(--radius-lg) 50% 50% / var(--radius-lg)
+    var(--radius-lg) 100% 100%;
+  background: var(--gloss-soft);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  border-color: var(--surface-border-strong);
-  box-shadow: var(--shadow-lift);
+  box-shadow: var(--bevel), var(--shadow-lift);
+  filter: saturate(118%);
 }
 
 .card:has(.hit:focus-visible) {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--aqua);
   outline-offset: 3px;
 }
 
-/* 카드 전체를 클릭 영역으로. 내부 링크가 없으므로 중첩 문제 없음. */
 .hit {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
 }
 
-/* ---- Media ---- */
+/* ---- 미디어 ---- */
 
 .media {
   position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: var(--surface-sunken);
+  background: var(--glass-faint);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .image,
@@ -45,7 +65,7 @@
   position: absolute;
   inset: 0;
   object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease-ios);
+  transition: transform var(--dur-slow) var(--ease-glass);
   will-change: transform;
 }
 
@@ -54,35 +74,78 @@
   transform: scale(1.06) translateY(-2%);
 }
 
+/*
+ * 썸네일이 없을 때의 대체 그림.
+ * 프로젝트별 hue 로 물빛 그라디언트를 만들고 그 위에 유리 광택을 덮는다.
+ */
 .placeholder {
   display: grid;
   place-items: center;
   background:
     radial-gradient(
-      120% 120% at 20% 0%,
-      oklch(72% 0.17 var(--hue) / 0.55),
-      transparent 60%
+      120% 130% at 18% 0%,
+      oklch(92% 0.1 var(--hue) / 0.95) 0%,
+      transparent 58%
     ),
     radial-gradient(
-      100% 100% at 100% 100%,
-      oklch(66% 0.15 calc(var(--hue) + 45) / 0.5),
-      transparent 55%
+      110% 120% at 100% 100%,
+      oklch(72% 0.16 calc(var(--hue) + 40) / 0.9) 0%,
+      transparent 56%
     ),
-    var(--surface-sunken);
+    linear-gradient(
+      to bottom,
+      oklch(86% 0.12 var(--hue)) 0%,
+      oklch(66% 0.15 calc(var(--hue) + 15)) 100%
+    );
 }
 
+/* 물결 반사 */
+.placeholder::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 55%;
+  background: linear-gradient(
+    to bottom,
+    oklch(100% 0 0 / 0.55) 0%,
+    oklch(100% 0 0 / 0.12) 60%,
+    oklch(100% 0 0 / 0) 100%
+  );
+}
+
+/* 번호를 유리구슬 안에 넣는다 */
 .placeholderNum {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 12%, 96px);
+  aspect-ratio: 1;
+  border-radius: 50%;
   font-family: var(--font-mono);
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  color: var(--text-primary);
-  opacity: 0.16;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: oklch(100% 0 0 / 0.95);
+  text-shadow: 0 1px 3px oklch(35% 0.1 250 / 0.6);
+  background:
+    radial-gradient(circle at 32% 26%, oklch(100% 0 0 / 0.85) 0%, transparent 46%),
+    radial-gradient(
+      circle at 50% 50%,
+      oklch(100% 0 0 / 0.14) 40%,
+      oklch(100% 0 0 / 0.32) 78%,
+      oklch(100% 0 0 / 0.08) 100%
+    );
+  border: 1px solid oklch(100% 0 0 / 0.6);
+  box-shadow:
+    inset 0 2px 8px oklch(100% 0 0 / 0.5),
+    0 6px 18px oklch(35% 0.1 250 / 0.3);
 }
 
-/* ---- Body ---- */
+/* ---- 본문 ---- */
 
 .body {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -99,52 +162,56 @@
 }
 
 .dot {
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
+  background: var(--aqua-bright);
+  box-shadow: 0 0 0 2px oklch(100% 0 0 / 0.55);
 }
 
 .title {
   font-size: clamp(1.125rem, 0.95rem + 0.7vw, 1.5rem);
   line-height: var(--leading-snug);
   margin-bottom: 0.55rem;
+  color: var(--text-primary);
 }
 
 .tagline {
   font-size: var(--text-small);
-  line-height: 1.6;
+  line-height: 1.62;
   color: var(--text-secondary);
   margin-bottom: 1.1rem;
 }
 
+/* 기술 태그도 작은 유리 알약 */
 .stack {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: 0.4rem;
   list-style: none;
   padding: 0;
   margin-bottom: 1.25rem;
 }
 
 .tag {
-  padding: 0.22rem 0.6rem;
+  padding: 0.26rem 0.7rem;
   font-size: var(--text-micro);
-  font-weight: 520;
-  color: var(--text-secondary);
-  border: 1px solid var(--surface-border);
+  font-weight: 600;
+  color: var(--aqua-deep);
+  background: var(--glass-faint);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-pill);
+  box-shadow: var(--bevel);
 }
 
 .more {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   margin-top: auto;
   font-size: var(--text-small);
-  font-weight: 560;
-  color: var(--accent);
+  font-weight: 700;
+  color: var(--aqua);
 }
 
 .arrow {
@@ -152,10 +219,10 @@
 }
 
 .card:hover .arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
-/* ---- Featured ---- */
+/* ---- 강조 카드 ---- */
 
 .featured {
   grid-column: span 2;

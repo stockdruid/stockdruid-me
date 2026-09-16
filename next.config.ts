@@ -34,7 +34,25 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        // 관리자 화면과 그 API 는 색인도 캐시도 되면 안 된다.
+        // ":path*" 는 /admin 자체를 잡지 못한다. 두 패턴을 모두 건다.
+        source: "/admin{/:path}*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "no-store, max-age=0" },
+        ],
+      },
+      {
+        source: "/api/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+          { key: "Cache-Control", value: "no-store, max-age=0" },
+        ],
+      },
+    ];
   },
 };
 

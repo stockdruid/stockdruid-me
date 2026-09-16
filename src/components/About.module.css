@@ -1,14 +1,41 @@
 .grid {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(2.5rem, 1rem + 5vw, 6rem);
+  gap: clamp(2rem, 1rem + 4vw, 4.5rem);
   margin-top: var(--space-block);
   align-items: start;
 }
 
+/* 본문도 유리판 위에 올린다. 하늘 위에 글자만 떠 있으면 읽기가 불안정하다. */
+.prose {
+  position: relative;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  isolation: isolate;
+}
+
+.prose::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 38%;
+  border-radius: var(--radius-lg) var(--radius-lg) 50% 50% / var(--radius-lg)
+    var(--radius-lg) 100% 100%;
+  background: var(--gloss-soft);
+  pointer-events: none;
+  z-index: -1;
+}
+
 .heading {
   font-size: var(--text-title);
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.65);
 }
 
 .paragraph {
@@ -21,63 +48,120 @@
   margin-bottom: 0;
 }
 
-/* 스킬 패널 — 스크롤과 함께 따라붙되 모바일에선 해제 */
+/* ---- 스킬 패널 ---- */
+
 .skills {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
   position: sticky;
-  top: 6.5rem;
+  top: 6.8rem;
 }
 
 .group {
-  padding: 1.35rem 1.5rem;
-  border: 1px solid var(--surface-border);
+  position: relative;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-card);
-  background: var(--surface-raised);
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  box-shadow: var(--shadow-rest);
+  background: var(--glass-strong);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(165%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(165%);
+  isolation: isolate;
   transition:
-    transform var(--dur-normal) var(--ease-ios),
-    box-shadow var(--dur-normal) var(--ease-ios),
-    border-color var(--dur-normal) var(--ease-ios);
+    transform var(--dur-normal) var(--ease-glass),
+    box-shadow var(--dur-normal) var(--ease-glass),
+    filter var(--dur-normal) var(--ease-glass);
+}
+
+.group::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 46%;
+  border-radius: var(--radius-card) var(--radius-card) 50% 50% / var(--radius-card)
+    var(--radius-card) 100% 100%;
+  background: var(--gloss);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .group:hover {
   transform: translateY(-3px);
-  border-color: var(--surface-border-strong);
-  box-shadow: var(--shadow-lift);
+  box-shadow: var(--bevel), var(--shadow-lift);
+  filter: saturate(115%);
+}
+
+/* 첫 그룹(Security)은 라임으로 강조해 시선을 먼저 잡는다 */
+.group:first-child .groupTitle {
+  color: oklch(38% 0.13 150);
+}
+
+.group:first-child .groupTitle::before {
+  background:
+    radial-gradient(circle at 32% 28%, oklch(100% 0 0 / 0.95), transparent 48%),
+    var(--grad-lime);
 }
 
 .groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: var(--text-micro);
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-bottom: 0.9rem;
+  color: var(--aqua-deep);
+  margin-bottom: 1rem;
+}
+
+/* 제목 앞 물방울 */
+.groupTitle::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, oklch(100% 0 0 / 0.95), transparent 48%),
+    var(--grad-aqua);
+  box-shadow: 0 1px 2px oklch(45% 0.1 245 / 0.45);
+  flex-shrink: 0;
 }
 
 .items {
   list-style: none;
   padding: 0;
   display: grid;
-  gap: 0.7rem;
+  gap: 0.75rem;
 }
 
 .item {
   display: grid;
-  gap: 0.1rem;
+  gap: 0.15rem;
+  padding-left: 0.9rem;
+  position: relative;
+}
+
+.item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--aqua-bright);
+  box-shadow: 0 0 0 2px oklch(100% 0 0 / 0.6);
 }
 
 .itemName {
   font-size: var(--text-small);
-  font-weight: 580;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .itemContext {
   font-size: var(--text-micro);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--text-tertiary);
 }
 

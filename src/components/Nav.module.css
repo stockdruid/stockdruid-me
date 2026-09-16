@@ -10,50 +10,75 @@
   pointer-events: none;
 }
 
+/*
+ * 떠 있는 유리바. Aero 의 작업 표시줄에서 온 형태다.
+ * 스크롤하면 폭이 줄면서 광택과 그림자가 강해진다.
+ */
 .pill {
+  position: relative;
   pointer-events: auto;
   display: flex;
   align-items: center;
   gap: clamp(0.5rem, 2vw, 1.5rem);
   width: 100%;
   max-width: var(--shell-max);
-  padding: 0.5rem 0.5rem 0.5rem 1.125rem;
+  padding: 0.45rem 0.45rem 0.45rem 1.1rem;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   background: transparent;
+  isolation: isolate;
   transition:
-    background var(--dur-normal) var(--ease-ios),
-    border-color var(--dur-normal) var(--ease-ios),
-    box-shadow var(--dur-normal) var(--ease-ios),
-    transform var(--dur-normal) var(--ease-ios),
-    max-width var(--dur-slow) var(--ease-ios);
+    background var(--dur-normal) var(--ease-glass),
+    border-color var(--dur-normal) var(--ease-glass),
+    box-shadow var(--dur-normal) var(--ease-glass),
+    max-width var(--dur-slow) var(--ease-glass);
+}
+
+.pill::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 52%;
+  border-radius: var(--radius-pill) var(--radius-pill) 50% 50% / var(--radius-pill)
+    var(--radius-pill) 100% 100%;
+  background: var(--gloss);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--dur-normal) var(--ease-glass);
 }
 
 .condensed {
-  max-width: 720px;
-  background: var(--surface-raised);
-  border-color: var(--surface-border);
-  box-shadow: var(--shadow-nav);
-  backdrop-filter: saturate(180%) blur(var(--blur-glass));
-  -webkit-backdrop-filter: saturate(180%) blur(var(--blur-glass));
+  max-width: 780px;
+  background: var(--glass-strong);
+  border-color: var(--glass-border);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-heavy)) saturate(170%);
+  -webkit-backdrop-filter: blur(var(--blur-heavy)) saturate(170%);
+}
+
+.condensed::before {
+  opacity: 1;
 }
 
 .brand {
   font-size: var(--text-small);
-  font-weight: 620;
+  font-weight: 800;
   letter-spacing: var(--tracking-normal);
   white-space: nowrap;
-  transition: opacity var(--dur-fast) var(--ease-ios);
+  color: var(--aqua-deep);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.7);
+  transition: filter var(--dur-fast) var(--ease-glass);
 }
 
 .brand:hover {
-  opacity: 0.6;
+  filter: brightness(1.15) saturate(130%);
 }
 
 .list {
   display: flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: 0.15rem;
   margin-left: auto;
   padding: 0;
   list-style: none;
@@ -62,48 +87,72 @@
 .link {
   position: relative;
   display: block;
-  padding: 0.4rem 0.85rem;
+  padding: 0.45rem 0.95rem;
   font-size: var(--text-small);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
   border-radius: var(--radius-pill);
+  border: 1px solid transparent;
   transition:
-    color var(--dur-fast) var(--ease-ios),
-    background var(--dur-fast) var(--ease-ios);
+    color var(--dur-fast) var(--ease-glass),
+    background var(--dur-fast) var(--ease-glass),
+    border-color var(--dur-fast) var(--ease-glass),
+    box-shadow var(--dur-fast) var(--ease-glass);
 }
 
 .link:hover {
-  color: var(--text-primary);
-  background: var(--surface-border);
+  color: var(--aqua-deep);
+  background: var(--glass-faint);
+  border-color: var(--glass-border);
+  box-shadow: var(--bevel);
 }
 
+/* 현재 섹션은 유리 알약으로 눌린 것처럼 보이게 한다 */
 .active {
-  color: var(--text-primary);
-  background: var(--accent-soft);
+  color: var(--aqua-deep);
+  background: var(--glass-strong);
+  border-color: var(--glass-border);
+  box-shadow: var(--bevel), 0 2px 6px oklch(50% 0.1 240 / 0.18);
 }
 
 .cta {
-  padding: 0.5rem 1.1rem;
+  position: relative;
+  overflow: hidden;
+  padding: 0.55rem 1.25rem;
   font-size: var(--text-small);
-  font-weight: 560;
+  font-weight: 700;
   white-space: nowrap;
   color: var(--text-on-accent);
-  background: var(--accent);
+  background: var(--grad-aqua);
+  border: 1px solid oklch(42% 0.14 248 / 0.7);
   border-radius: var(--radius-pill);
+  box-shadow: var(--bevel-deep), 0 4px 14px oklch(55% 0.15 238 / 0.4);
+  text-shadow: 0 1px 2px oklch(30% 0.1 250 / 0.5);
   transition:
-    background var(--dur-fast) var(--ease-ios),
+    background var(--dur-fast) var(--ease-glass),
     transform var(--dur-fast) var(--ease-spring),
-    box-shadow var(--dur-fast) var(--ease-ios);
+    box-shadow var(--dur-fast) var(--ease-glass);
+}
+
+.cta::after {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 50%;
+  border-radius: var(--radius-pill) var(--radius-pill) 50% 50% / var(--radius-pill)
+    var(--radius-pill) 100% 100%;
+  background: var(--gloss);
+  pointer-events: none;
 }
 
 .cta:hover {
-  background: var(--accent-hover);
+  background: var(--grad-aqua-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px var(--accent-ring);
+  box-shadow: var(--bevel-deep), 0 8px 22px oklch(55% 0.15 238 / 0.55);
 }
 
 .cta:active {
-  transform: translateY(0) scale(0.97);
+  transform: translateY(1px) scale(0.97);
 }
 
 @media (max-width: 640px) {
@@ -112,7 +161,7 @@
   }
 
   .link {
-    padding: 0.4rem 0.6rem;
+    padding: 0.45rem 0.65rem;
   }
 
   .cta {
