@@ -4,8 +4,9 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import { Projects } from "@/components/Projects";
+import { Stack } from "@/components/Stack";
 import { projects } from "@/content/projects";
-import { site } from "@/content/site";
+import { site, stack } from "@/content/site";
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -16,7 +17,12 @@ const personSchema = {
   jobTitle: site.role,
   description: site.summary,
   sameAs: [site.links.github, site.links.linkedin].filter(Boolean),
-  knowsAbout: [...new Set(projects.flatMap((p) => p.stack))],
+  knowsAbout: [
+    ...new Set([
+      ...stack.flatMap((g) => g.items.map((i) => i.name)),
+      ...projects.flatMap((p) => p.stack),
+    ]),
+  ],
 };
 
 export default function Home() {
@@ -26,6 +32,7 @@ export default function Home() {
       <main>
         <Hero />
         <About />
+        <Stack />
         <Projects />
         <Contact />
       </main>
