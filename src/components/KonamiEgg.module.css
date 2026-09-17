@@ -65,3 +65,41 @@
     animation: none;
   }
 }
+
+/*
+ * 진행 표시. 절반쯤 맞히면 오른쪽 아래에 점이 켜진다.
+ * 어디까지 인식됐는지 보이므로, 안 될 때 원인을 좁힐 수 있다.
+ */
+.progress {
+  position: fixed;
+  right: var(--space-gutter);
+  bottom: 1.2rem;
+  z-index: 60;
+  display: flex;
+  gap: 5px;
+  padding: 0.45rem 0.7rem;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--bevel), var(--shadow-rest);
+  backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(160%);
+  animation: slideUp 260ms var(--ease-spring) backwards;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: oklch(60% 0.02 240 / 0.3);
+  transition:
+    background var(--dur-fast) var(--ease-glass),
+    box-shadow var(--dur-fast) var(--ease-glass);
+}
+
+.dotOn {
+  background:
+    radial-gradient(circle at 32% 28%, oklch(100% 0 0 / 0.9), transparent 48%),
+    var(--grad-aqua);
+  box-shadow: 0 0 6px var(--aqua-ring);
+}

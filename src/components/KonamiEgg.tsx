@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./KonamiEgg.module.css";
 
 /**
@@ -33,6 +33,14 @@ const FALLBACK: Record<string, string> = {
   KeyA: "a",
 };
 
+/** 이만큼 맞히면 진행 표시를 보여 준다 */
+const HINT_FROM = 3;
+/**
+ * 이 시간 동안 입력이 없으면 처음부터.
+ * 4초로 잡았더니 천천히 누르는 사람이 중간에 초기화됐다. 넉넉하게 둔다.
+ */
+const IDLE_RESET_MS = 12000;
+
 /**
  * 코나미 코드를 입력하면 Aero 부팅 모드가 켜진다.
  *
@@ -44,9 +52,25 @@ const FALLBACK: Record<string, string> = {
  */
 export function KonamiEgg() {
   const [on, setOn] = useState(false);
+  const [hint, setHint] = useState(0);
+
+  const progress = useRef(0);
+  const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    let progress = 0;
+    function setProgress(n: number) {
+      progress.current = n;
+      setHint(n);
+
+      if (idle.current) clearTimeout(idle.current);
+      if (n > 0) {
+        // 중간까지 치다 만 상태가 남아 다음 시도를 망치지 않게 한다.
+        idle.current = setTimeout(() => {
+          progress.current = 0;
+          setHint(0);
+        }, IDLE_RESET_MS);
+      }
+    }
 
     function isTyping(target: EventTarget | null) {
       if (!(target instanceof HTMLElement)) return false;
@@ -63,33 +87,43 @@ export function KonamiEgg() {
     }
 
     function onKey(event: KeyboardEvent) {
+      // 키를 살짝만 길게 눌러도 keydown 이 반복해서 발생한다. 방향키에서 특히
+      // 잦다. 이걸 세면 한 번 누른 것이 두 번으로 잡혀 순서가 어긋난다.
+      if (event.repeat) return;
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
       if (isTyping(event.target)) return;
 
       if (on && event.key === "Escape") {
         setOn(false);
+        setProgress(0);
         return;
       }
 
-      if (matches(event, SEQUENCE[progress])) {
-        progress += 1;
+      if (matches(event, SEQUENCE[progress.current])) {
+        const next = progress.current + 1;
 
         // 순서를 밟는 중에는 방향키로 화면이 흔들리지 않게 한다.
         // 첫 입력까지는 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다.
-        if (progress > 1) event.preventDefault();
+        if (next > 1) event.preventDefault();
 
-        if (progress === SEQUENCE.length) {
-          progress = 0;
+        if (next === SEQUENCE.length) {
+          setProgress(0);
           setOn((v) => !v);
+          return;
         }
+        setProgress(next);
         return;
       }
 
       // 틀렸을 때 첫 키와 같으면 거기서 다시 센다.
-      progress = matches(event, SEQUENCE[0]) ? 1 : 0;
+      setProgress(matches(event, SEQUENCE[0]) ? 1 : 0);
     }
 
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (idle.current) clearTimeout(idle.current);
+    };
   }, [on]);
 
   useEffect(() => {
@@ -101,15 +135,29 @@ export function KonamiEgg() {
     };
   }, [on]);
 
-  if (!on) return null;
-
   return (
-    <div className={styles.notice} role="status">
-      <span className={styles.orb} aria-hidden="true" />
-      <span className={styles.text}>
-        Aero 부팅 모드
-        <span className={styles.hint}>Esc 로 끄기</span>
-      </span>
-    </div>
+    <>
+      {/* 절반쯤 맞히면 진행 상황을 보여 준다. 어디서 끊겼는지 알 수 있다. */}
+      {!on && hint >= HINT_FROM && (
+        <div className={styles.progress} aria-hidden="true">
+          {SEQUENCE.map((_, i) => (
+            <span
+              key={i}
+              className={`${styles.dot} ${i < hint ? styles.dotOn : ""}`}
+            />
+          ))}
+        </div>
+      )}
+
+      {on && (
+        <div className={styles.notice} role="status">
+          <span className={styles.orb} aria-hidden="true" />
+          <span className={styles.text}>
+            Aero 부팅 모드
+            <span className={styles.hint}>Esc 로 끄기</span>
+          </span>
+        </div>
+      )}
+    </>
   );
 }
