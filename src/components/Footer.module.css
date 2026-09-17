@@ -33,19 +33,6 @@
   text-shadow: 0 1px 0 oklch(100% 0 0 / 0.7);
 }
 
-.note {
-  order: 3;
-  flex-basis: 100%;
-  color: var(--text-secondary);
-}
-
 .year {
   font-variant-numeric: tabular-nums;
-}
-
-@media (min-width: 720px) {
-  .note {
-    order: 0;
-    flex-basis: auto;
-  }
 }
