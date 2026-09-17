@@ -246,7 +246,17 @@ export function KonamiEgg() {
             onClick={stopSans}
             aria-label="닫기"
           />
+
+          {/* 무대 조명. 도는 속도와 색이 제각각이라 주기가 쉽게 겹치지 않는다. */}
+          <div className={styles.lasers} aria-hidden="true">
+            <span className={`${styles.beam} ${styles.beamCyan}`} />
+            <span className={`${styles.beam} ${styles.beamMagenta}`} />
+            <span className={`${styles.beam} ${styles.beamLime}`} />
+          </div>
+          <div className={styles.strobe} aria-hidden="true" />
+
           <div className={styles.figure} aria-hidden="true">
+            <span className={styles.halo} />
             <Image
               src="/images/sans.webp"
               alt=""

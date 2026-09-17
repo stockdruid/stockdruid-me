@@ -137,10 +137,142 @@
   );
 }
 
+/*
+ * 무대 조명.
+ *
+ * 중심에서 뻗어 나가는 쐐기를 repeating-conic-gradient 로 그리고 통째로
+ * 돌린다. 움직이는 것은 rotate 뿐이라 합성기에서 처리된다.
+ * 큰 요소에 filter: blur() 를 걸면 페인트가 멈추므로 부드러움은 마스크의
+ * 알파 감쇠로 얻는다.
+ *
+ * 화면보다 크게 잡아야 돌아갈 때 모서리가 비지 않는다.
+ */
+.lasers {
+  position: absolute;
+  inset: -45%;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.beam {
+  position: absolute;
+  inset: 0;
+  /* 중심부와 바깥쪽을 지워 빔이 뻗어 나가다 사라지는 것처럼 보이게 한다. */
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent 3%,
+    black 16%,
+    black 44%,
+    transparent 74%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent 3%,
+    black 16%,
+    black 44%,
+    transparent 74%
+  );
+  will-change: transform;
+}
+
+.beamCyan {
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg 14deg,
+    oklch(85% 0.18 210 / 0.55) 14deg 16deg,
+    transparent 16deg 30deg
+  );
+  animation: sweep 9s linear infinite;
+}
+
+.beamMagenta {
+  background: repeating-conic-gradient(
+    from 7deg at 50% 50%,
+    transparent 0deg 21deg,
+    oklch(72% 0.29 330 / 0.5) 21deg 24deg,
+    transparent 24deg 45deg
+  );
+  animation: sweep 13s linear infinite reverse;
+}
+
+.beamLime {
+  background: repeating-conic-gradient(
+    from 3deg at 50% 50%,
+    transparent 0deg 11deg,
+    oklch(88% 0.22 135 / 0.42) 11deg 12.6deg,
+    transparent 12.6deg 24deg
+  );
+  animation: sweep 6.5s linear infinite;
+}
+
+@keyframes sweep {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/*
+ * 섬광.
+ *
+ * 주기를 0.44초로 잡아 초당 2.3회다. 초당 3회를 넘기면 광과민성 발작을
+ * 유발할 수 있어 일부러 그 아래에 둔다. 한 주기에 한 번만 번쩍인다.
+ */
+.strobe {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: oklch(97% 0.03 220);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: strobe 0.44s steps(1, end) infinite;
+}
+
+@keyframes strobe {
+  0% {
+    opacity: 0.2;
+  }
+  14%,
+  100% {
+    opacity: 0;
+  }
+}
+
 .figure {
   position: relative;
+  z-index: 3;
   width: min(48vw, 34vh);
   animation: bob 2.4s var(--ease-glass) infinite;
+}
+
+/* 발밑 조명. 색이 계속 돌아 정신없는 느낌을 만든다. */
+.halo {
+  position: absolute;
+  inset: -22% -28%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 58%,
+    oklch(75% 0.24 320 / 0.5) 0%,
+    oklch(70% 0.2 250 / 0.28) 42%,
+    transparent 72%
+  );
+  animation:
+    hue 2.8s linear infinite,
+    pulse 0.88s var(--ease-glass) infinite;
+}
+
+@keyframes hue {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+    scale: 1.08;
+  }
 }
 
 /*
@@ -154,7 +286,16 @@
   image-rendering: pixelated;
   filter: drop-shadow(0 0 22px oklch(72% 0.17 235 / 0.55))
     drop-shadow(0 0 60px oklch(66% 0.2 250 / 0.35));
-  animation: flicker 3.6s steps(1, end) infinite;
+  animation:
+    flicker 3.6s steps(1, end) infinite,
+    jitter 0.36s steps(2, end) infinite;
+}
+
+/* 조명에 맞춰 살짝 떠는 정도. 크게 흔들면 도트가 뭉개져 보인다. */
+@keyframes jitter {
+  50% {
+    translate: 0.4% -0.5%;
+  }
 }
 
 @keyframes bob {
@@ -195,10 +336,20 @@
   pointer-events: none;
 }
 
+/*
+ * 모션을 줄인 환경에서는 조명을 통째로 끈다.
+ * 특히 섬광은 취향 문제가 아니라 안전 문제다.
+ */
 @media (prefers-reduced-motion: reduce) {
   .stage,
   .figure,
-  .sprite {
+  .sprite,
+  .beam,
+  .halo {
     animation: none;
+  }
+
+  .strobe {
+    display: none;
   }
 }
