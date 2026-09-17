@@ -2,7 +2,6 @@ import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
-import { KonamiEgg } from "@/components/KonamiEgg";
 import { Nav } from "@/components/Nav";
 import { Projects } from "@/components/Projects";
 import { Stack } from "@/components/Stack";
@@ -38,7 +37,6 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
-      <KonamiEgg />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}

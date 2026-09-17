@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { KonamiEgg } from "@/components/KonamiEgg";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -61,7 +62,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* 어느 페이지에서 입력하든 반응하도록 최상위에 둔다 */}
+        <KonamiEgg />
+      </body>
     </html>
   );
 }
