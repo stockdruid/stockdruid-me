@@ -82,6 +82,8 @@ export function KonamiEgg() {
   const aeroStep = useRef(0);
   const sansStep = useRef(0);
   const trailStep = useRef(0);
+  /** 키를 누르고 있는 동안 자동 반복을 한 번 받았는지 */
+  const repeatUsed = useRef(false);
   const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
 
@@ -122,6 +124,25 @@ export function KonamiEgg() {
       return !event.code && event.key.toLowerCase() === FALLBACK[step];
     }
 
+    const tracks = [
+      { sequence: AERO_SEQUENCE as readonly string[], cursor: aeroStep },
+      { sequence: SANS_SEQUENCE as readonly string[], cursor: sansStep },
+      { sequence: TRAIL_SEQUENCE as readonly string[], cursor: trailStep },
+    ];
+
+    /**
+     * 지금 누른 키가 "같은 키를 한 번 더" 기다리는 자리인지 본다.
+     * ↓ ↓ 나 ↑ ↑ 처럼 같은 키가 연달아 오는 자리를 말한다.
+     */
+    function expectsSameKeyAgain(event: KeyboardEvent) {
+      return tracks.some(({ sequence, cursor }) => {
+        const i = cursor.current;
+        return (
+          i > 0 && matches(event, sequence[i]) && matches(event, sequence[i - 1])
+        );
+      });
+    }
+
     /** 한 순서의 진행도를 갱신하고, 방금 완성됐는지 알려 준다. */
     function advance(
       event: KeyboardEvent,
@@ -142,11 +163,25 @@ export function KonamiEgg() {
     }
 
     function onKey(event: KeyboardEvent) {
-      // 키를 살짝만 길게 눌러도 keydown 이 반복해서 발생한다. 방향키에서 특히
-      // 잦다. 이걸 세면 한 번 누른 것이 두 번으로 잡혀 순서가 어긋난다.
-      if (event.repeat) return;
       if (event.ctrlKey || event.altKey || event.metaKey) return;
       if (isTyping(event.target)) return;
+
+      /*
+       * 키를 조금만 길게 눌러도 keydown 이 반복해서 발생한다. 방향키에서
+       * 특히 잦다. 반복을 그대로 세면 한 번 누른 것이 여러 번으로 잡혀
+       * 순서가 어긋난다.
+       *
+       * 그렇다고 전부 버리면 ↓ ↓ 처럼 같은 키가 연달아 오는 자리에서
+       * 키를 누른 채로 두 번을 채우려는 사람이 막힌다. 실제로 여기서
+       * 걸렸다. 그래서 그 자리에서만, 누르고 있는 동안 딱 한 번 받아 준다.
+       */
+      if (event.repeat) {
+        if (repeatUsed.current) return;
+        if (!expectsSameKeyAgain(event)) return;
+        repeatUsed.current = true;
+      } else {
+        repeatUsed.current = false;
+      }
 
       if (event.key === "Escape") {
         const anything = sans || aero || trail;

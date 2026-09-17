@@ -28,7 +28,9 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",
-    "connect-src 'self' https://cloudflareinsights.com",
+    // 비콘 스크립트는 자기 자신을 static 하위 도메인에서 다시 내려받는다.
+    // 두 도메인을 모두 열어야 한다. 하나만 열면 콘솔에 CSP 위반이 쌓인다.
+    "connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com",
     "form-action 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
