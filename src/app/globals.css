@@ -214,3 +214,121 @@ textarea {
   animation-duration: var(--dur-normal);
   animation-timing-function: var(--ease-glass);
 }
+
+/* ------------------------------------------------------------------ */
+/* Aero 부팅 모드 (코나미 코드)                                         */
+/*                                                                      */
+/* Vista 바탕화면의 오로라를 흉내 낸다. 배경을 갈아 끼우고 유리의 채도와  */
+/* 광택을 올린다.                                                        */
+/*                                                                      */
+/* 색 처리 방향: 처음에는 텍스트 토큰을 전부 밝게 덮었더니 유리 패널 위    */
+/* 글자까지 밝아져 버튼과 배지가 읽히지 않았다. 그래서 반대로 간다.       */
+/* 기본 토큰은 건드리지 않고(유리 위 어두운 글자는 그대로 잘 읽힌다),     */
+/* 오로라에 직접 얹히는 표시용 텍스트만 밝게 바꾼다.                      */
+/* 이스터에그 때문에 접근성을 잃지 않는다.                                */
+/* ------------------------------------------------------------------ */
+
+html[data-aero="on"] {
+  --glass: oklch(100% 0 0 / 0.55);
+  --glass-strong: oklch(100% 0 0 / 0.72);
+  --glass-border: oklch(100% 0 0 / 0.8);
+  --blur-glass: 26px;
+  --blur-heavy: 40px;
+  --gloss: linear-gradient(
+    to bottom,
+    oklch(100% 0 0 / 0.92) 0%,
+    oklch(100% 0 0 / 0.45) 44%,
+    oklch(100% 0 0 / 0.08) 50%,
+    oklch(100% 0 0 / 0) 100%
+  );
+}
+
+html[data-aero="on"] body {
+  background:
+    radial-gradient(
+      140% 90% at 20% 110%,
+      oklch(72% 0.2 195 / 0.85) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      120% 80% at 85% 105%,
+      oklch(66% 0.22 280 / 0.8) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      100% 70% at 50% 120%,
+      oklch(80% 0.18 150 / 0.6) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      to bottom,
+      oklch(30% 0.12 265) 0%,
+      oklch(40% 0.15 250) 35%,
+      oklch(54% 0.16 225) 70%,
+      oklch(70% 0.15 200) 100%
+    );
+  background-attachment: fixed;
+}
+
+/* 오로라에 직접 얹히는 표시용 텍스트만 밝게 */
+html[data-aero="on"] [class*="heading"],
+html[data-aero="on"] [class*="subheading"],
+html[data-aero="on"] [class*="summary"],
+html[data-aero="on"] [class*="scrollText"] {
+  color: oklch(98% 0.012 225);
+  text-shadow:
+    0 1px 2px oklch(20% 0.08 260 / 0.75),
+    0 4px 18px oklch(20% 0.08 260 / 0.5);
+}
+
+/* 유리 패널 안쪽 제목은 원래 색을 지킨다 */
+html[data-aero="on"] [class*="panel"] [class*="heading"],
+html[data-aero="on"] [class*="card"] [class*="heading"],
+html[data-aero="on"] [class*="group"] [class*="heading"],
+html[data-aero="on"] [class*="prose"] [class*="heading"],
+html[data-aero="on"] [class*="principle"] [class*="heading"],
+html[data-aero="on"] [class*="decision"] [class*="heading"] {
+  color: var(--text-primary);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.65);
+}
+
+/* 물결은 밝은 하늘색이라 오로라 위에서 뜬다. 바닥색에 맞춘다. */
+html[data-aero="on"] svg path[class*="waveFront"] {
+  fill: oklch(70% 0.15 200);
+}
+
+html[data-aero="on"] svg path[class*="waveBack"] {
+  fill: oklch(100% 0 0 / 0.22);
+}
+
+/*
+ * 상단 내비와 스크롤 안내는 배경 위에 그대로 얹힌다.
+ * 측정해 보니 내비 링크가 1.81 : 1 까지 떨어졌다. 밝은 색으로 바꾸고
+ * 그림자를 깔아 오로라의 밝은 부분 위에서도 읽히게 한다.
+ */
+html[data-aero="on"] header nav a,
+html[data-aero="on"] [class*="scrollText"],
+html[data-aero="on"] [class*="scrollHint"] {
+  color: oklch(97% 0.015 220);
+  text-shadow:
+    0 1px 2px oklch(20% 0.08 260 / 0.85),
+    0 2px 10px oklch(20% 0.08 260 / 0.6);
+}
+
+/* 현재 섹션 표시와 CTA 는 유리 위에 있으므로 원래 색을 지킨다 */
+html[data-aero="on"] header nav a[class*="active"],
+html[data-aero="on"] header nav a[class*="cta"] {
+  color: var(--aqua-deep);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.6);
+}
+
+html[data-aero="on"] header nav a[class*="cta"] {
+  color: var(--text-on-accent);
+  text-shadow: 0 1px 2px oklch(30% 0.1 250 / 0.55);
+}
+
+/* 스크롤하여 유리바가 나타나면 다시 어두운 글자가 읽기 좋다 */
+html[data-aero="on"] header nav[class*="condensed"] a:not([class*="cta"]) {
+  color: var(--aqua-deep);
+  text-shadow: 0 1px 0 oklch(100% 0 0 / 0.7);
+}

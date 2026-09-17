@@ -1,0 +1,67 @@
+/* 모드가 켜졌다는 표시. 오른쪽 아래에 조용히 뜬다. */
+.notice {
+  position: fixed;
+  right: var(--space-gutter);
+  bottom: 1.2rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem 0.5rem 0.65rem;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--bevel), var(--shadow-lift);
+  backdrop-filter: blur(var(--blur-heavy)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--blur-heavy)) saturate(180%);
+  animation: slideUp 420ms var(--ease-spring) backwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.orb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 34% 26%, oklch(100% 0 0 / 0.95) 0%, transparent 44%),
+    var(--grad-aqua);
+  border: 1px solid oklch(100% 0 0 / 0.55);
+  box-shadow: var(--bevel-deep), 0 0 12px var(--aqua-ring);
+  animation: spin 3.5s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: var(--text-micro);
+  font-weight: 800;
+  letter-spacing: var(--tracking-wide);
+  color: var(--aqua-deep);
+}
+
+.hint {
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice,
+  .orb {
+    animation: none;
+  }
+}

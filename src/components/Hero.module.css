@@ -104,63 +104,6 @@
   }
 }
 
-/* ---------- 기포 ---------- */
-
-.bubbles {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/*
- * 물방울 하나하나가 유리구슬이다. 왼쪽 위 하이라이트와 아래쪽 굴절로
- * 입체감을 만든다. transform 만 애니메이션한다.
- */
-.bubble {
-  position: absolute;
-  left: var(--left);
-  bottom: -12vh;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 30% 26%, oklch(100% 0 0 / 0.95) 0%, transparent 42%),
-    radial-gradient(circle at 70% 78%, oklch(88% 0.09 215 / 0.5) 0%, transparent 46%),
-    radial-gradient(
-      circle at 50% 50%,
-      oklch(100% 0 0 / 0.08) 38%,
-      oklch(100% 0 0 / 0.26) 76%,
-      oklch(100% 0 0 / 0.05) 100%
-    );
-  box-shadow:
-    inset 0 0 6px oklch(100% 0 0 / 0.55),
-    0 0 8px oklch(85% 0.08 220 / 0.35);
-  animation: rise var(--dur) linear infinite;
-  animation-delay: var(--delay);
-  will-change: transform;
-}
-
-@keyframes rise {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.85);
-    opacity: 0;
-  }
-  8% {
-    opacity: 0.9;
-  }
-  50% {
-    transform: translate3d(14px, -55vh, 0) scale(1);
-  }
-  92% {
-    opacity: 0.75;
-  }
-  100% {
-    transform: translate3d(-10px, -112vh, 0) scale(1.1);
-    opacity: 0;
-  }
-}
-
 /* ---------- 콘텐츠 ---------- */
 
 .inner {
