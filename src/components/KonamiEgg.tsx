@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./KonamiEgg.module.css";
 
 /**
- * 방향키만으로 판정한다. ↑ ↑ ↓ ↓ ← → ← →
+ * 방향키만으로 판정한다.
+ *
+ * 정방향 ↑ ↑ ↓ ↓ ← → ← → 은 Aero 부팅 모드,
+ * 역방향 → ← → ← ↓ ↓ ↑ ↑ 은 숨은 손님을 부른다.
  *
  * 원래는 코나미 코드 그대로 B, A 로 끝냈는데 실제 키보드에서 끝까지 들어가지
  * 않는 일이 잦았다. 한글 입력 상태에서 글자 키가 엉키는 문제를 물리 키
@@ -13,7 +17,7 @@ import styles from "./KonamiEgg.module.css";
  *
  * 판정은 `event.code`(물리 키 위치)로 한다. 자판 배열과 무관하게 동작한다.
  */
-const SEQUENCE = [
+const AERO_SEQUENCE = [
   "ArrowUp",
   "ArrowUp",
   "ArrowDown",
@@ -23,6 +27,9 @@ const SEQUENCE = [
   "ArrowLeft",
   "ArrowRight",
 ] as const;
+
+/** 정방향을 그대로 뒤집은 순서 */
+const SANS_SEQUENCE = [...AERO_SEQUENCE].reverse();
 
 /** `code` 를 주지 않는 환경을 위한 대체 비교값 */
 const FALLBACK: Record<string, string> = {
@@ -40,35 +47,50 @@ const HINT_FROM = 3;
  */
 const IDLE_RESET_MS = 12000;
 
+const SANS_AUDIO_SRC = "/audio/megalovania.mp3";
+const SANS_VOLUME = 0.45;
+
 /**
- * 코나미 코드를 입력하면 Aero 부팅 모드가 켜진다.
+ * 방향키 순서를 입력하면 숨은 기능이 열린다.
  *
- * 화면 변화는 전부 CSS 가 맡는다. 이 컴포넌트는 html 요소에 data-aero 를
- * 붙였다 떼기만 한다. 덕분에 번들에 들어가는 코드가 얼마 되지 않는다.
+ * Aero 모드의 화면 변화는 전부 CSS 가 맡는다. 이 컴포넌트는 html 요소에
+ * data-aero 를 붙였다 떼기만 한다. 덕분에 번들에 들어가는 코드가 얼마 되지
+ * 않는다.
  *
- * 입력칸에 타자를 칠 때는 반응하지 않아야 한다. 연락처 폼에 b 나 a 를
- * 적다가 배경이 바뀌면 곤란하다.
+ * 음원은 순서를 다 맞힌 뒤에야 내려받는다. 평소에는 요청조차 하지 않으므로
+ * 첫 화면 성능에 영향이 없다.
+ *
+ * 입력칸에 타자를 칠 때는 반응하지 않아야 한다. 연락처 폼에 방향키를
+ * 누르다가 배경이 바뀌면 곤란하다.
  */
 export function KonamiEgg() {
-  const [on, setOn] = useState(false);
+  const [aero, setAero] = useState(false);
+  const [sans, setSans] = useState(false);
   const [hint, setHint] = useState(0);
 
-  const progress = useRef(0);
+  const aeroStep = useRef(0);
+  const sansStep = useRef(0);
   const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audio = useRef<HTMLAudioElement | null>(null);
+
+  const stopSans = useCallback(() => {
+    setSans(false);
+    const player = audio.current;
+    if (!player) return;
+    player.pause();
+    player.currentTime = 0;
+  }, []);
 
   useEffect(() => {
-    function setProgress(n: number) {
-      progress.current = n;
-      setHint(n);
-
+    function resetLater() {
       if (idle.current) clearTimeout(idle.current);
-      if (n > 0) {
-        // 중간까지 치다 만 상태가 남아 다음 시도를 망치지 않게 한다.
-        idle.current = setTimeout(() => {
-          progress.current = 0;
-          setHint(0);
-        }, IDLE_RESET_MS);
-      }
+      if (aeroStep.current === 0 && sansStep.current === 0) return;
+      // 중간까지 치다 만 상태가 남아 다음 시도를 망치지 않게 한다.
+      idle.current = setTimeout(() => {
+        aeroStep.current = 0;
+        sansStep.current = 0;
+        setHint(0);
+      }, IDLE_RESET_MS);
     }
 
     function isTyping(target: EventTarget | null) {
@@ -85,6 +107,25 @@ export function KonamiEgg() {
       return !event.code && event.key.toLowerCase() === FALLBACK[step];
     }
 
+    /** 한 순서의 진행도를 갱신하고, 방금 완성됐는지 알려 준다. */
+    function advance(
+      event: KeyboardEvent,
+      sequence: readonly string[],
+      cursor: { current: number },
+    ) {
+      if (matches(event, sequence[cursor.current])) {
+        cursor.current += 1;
+        if (cursor.current === sequence.length) {
+          cursor.current = 0;
+          return true;
+        }
+        return false;
+      }
+      // 틀렸을 때 첫 키와 같으면 거기서 다시 센다.
+      cursor.current = matches(event, sequence[0]) ? 1 : 0;
+      return false;
+    }
+
     function onKey(event: KeyboardEvent) {
       // 키를 살짝만 길게 눌러도 keydown 이 반복해서 발생한다. 방향키에서 특히
       // 잦다. 이걸 세면 한 번 누른 것이 두 번으로 잡혀 순서가 어긋난다.
@@ -92,30 +133,37 @@ export function KonamiEgg() {
       if (event.ctrlKey || event.altKey || event.metaKey) return;
       if (isTyping(event.target)) return;
 
-      if (on && event.key === "Escape") {
-        setOn(false);
-        setProgress(0);
-        return;
-      }
-
-      if (matches(event, SEQUENCE[progress.current])) {
-        const next = progress.current + 1;
-
-        // 순서를 밟는 중에는 방향키로 화면이 흔들리지 않게 한다.
-        // 첫 입력까지는 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다.
-        if (next > 1) event.preventDefault();
-
-        if (next === SEQUENCE.length) {
-          setProgress(0);
-          setOn((v) => !v);
+      if (event.key === "Escape") {
+        if (sans) stopSans();
+        if (aero) setAero(false);
+        if (sans || aero) {
+          aeroStep.current = 0;
+          sansStep.current = 0;
+          setHint(0);
           return;
         }
-        setProgress(next);
-        return;
       }
 
-      // 틀렸을 때 첫 키와 같으면 거기서 다시 센다.
-      setProgress(matches(event, SEQUENCE[0]) ? 1 : 0);
+      const before = Math.max(aeroStep.current, sansStep.current);
+
+      // 두 순서를 나란히 센다. 첫 키가 서로 다르므로 동시에 완성될 일은 없다.
+      const aeroDone = advance(event, AERO_SEQUENCE, aeroStep);
+      const sansDone = advance(event, SANS_SEQUENCE, sansStep);
+
+      const after = Math.max(aeroStep.current, sansStep.current);
+
+      // 순서를 밟는 중에는 방향키로 화면이 흔들리지 않게 한다.
+      // 첫 입력까지는 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다.
+      if (before > 0 && after > 0) event.preventDefault();
+
+      if (aeroDone) {
+        setAero((v) => !v);
+      } else if (sansDone) {
+        setSans(true);
+      }
+
+      setHint(aeroDone || sansDone ? 0 : after);
+      resetLater();
     }
 
     window.addEventListener("keydown", onKey);
@@ -123,23 +171,50 @@ export function KonamiEgg() {
       window.removeEventListener("keydown", onKey);
       if (idle.current) clearTimeout(idle.current);
     };
-  }, [on]);
+  }, [aero, sans, stopSans]);
 
   useEffect(() => {
     const root = document.documentElement;
-    if (on) root.dataset.aero = "on";
+    if (aero) root.dataset.aero = "on";
     else delete root.dataset.aero;
     return () => {
       delete root.dataset.aero;
     };
-  }, [on]);
+  }, [aero]);
+
+  // 음원은 여기서 처음 만들어진다. 순서를 맞히기 전에는 내려받지 않는다.
+  useEffect(() => {
+    if (!sans) return;
+
+    if (!audio.current) {
+      audio.current = new Audio(SANS_AUDIO_SRC);
+      audio.current.volume = SANS_VOLUME;
+    }
+    const player = audio.current;
+    player.currentTime = 0;
+    // 자동 재생이 막히는 경우에도 화면은 그대로 둔다.
+    void player.play().catch(() => {});
+
+    const onEnded = () => setSans(false);
+    player.addEventListener("ended", onEnded);
+    return () => player.removeEventListener("ended", onEnded);
+  }, [sans]);
+
+  useEffect(() => {
+    return () => {
+      audio.current?.pause();
+      audio.current = null;
+    };
+  }, []);
+
+  const hintTotal = AERO_SEQUENCE.length;
 
   return (
     <>
       {/* 절반쯤 맞히면 진행 상황을 보여 준다. 어디서 끊겼는지 알 수 있다. */}
-      {!on && hint >= HINT_FROM && (
+      {!aero && !sans && hint >= HINT_FROM && (
         <div className={styles.progress} aria-hidden="true">
-          {SEQUENCE.map((_, i) => (
+          {Array.from({ length: hintTotal }, (_, i) => (
             <span
               key={i}
               className={`${styles.dot} ${i < hint ? styles.dotOn : ""}`}
@@ -148,13 +223,42 @@ export function KonamiEgg() {
         </div>
       )}
 
-      {on && (
+      {aero && !sans && (
         <div className={styles.notice} role="status">
           <span className={styles.orb} aria-hidden="true" />
           <span className={styles.text}>
             Aero 부팅 모드
             <span className={styles.hint}>Esc 로 끄기</span>
           </span>
+        </div>
+      )}
+
+      {sans && (
+        <div
+          className={styles.stage}
+          role="dialog"
+          aria-modal="true"
+          aria-label="숨은 손님"
+        >
+          <button
+            type="button"
+            className={styles.backdrop}
+            onClick={stopSans}
+            aria-label="닫기"
+          />
+          <div className={styles.figure} aria-hidden="true">
+            <Image
+              src="/images/sans.webp"
+              alt=""
+              width={1000}
+              height={1314}
+              className={styles.sprite}
+              unoptimized
+            />
+          </div>
+          <p className={styles.caption} aria-hidden="true">
+            Esc 로 닫기
+          </p>
         </div>
       )}
     </>

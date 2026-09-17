@@ -148,6 +148,27 @@ FCP 3.9s · LCP 5.0s · CLS 0 · TBT 10ms. 전송량 620KB 중 **419KB가 한글
 
 - PC가 꺼지면 사이트도 내려간다. 가용성이 필요해지면 정적 빌드본을 Cloudflare Pages에 폴백으로 올린다.
 - 페이지 간 이동은 의도적으로 전체 문서 내비게이션이다. `next/link` 의 클라이언트 라우팅으로는 네이티브 cross-document View Transition이 발동하지 않는다. 모든 페이지가 정적이라 프리페치를 포기한 비용은 작다.
-- CSP 헤더는 아직 설정하지 않았다. 나머지 보안 헤더(HSTS, nosniff, frame-deny, referrer, permissions)는 `next.config.ts` 에 있다. 현재 사용자 입력이 DOM 으로 렌더링되는 경로가 없어 XSS 표면 자체는 없다.
+- CSP 는 요청마다 nonce 를 발급해 `src/middleware.ts` 에서 붙인다. nonce 를 쓰려면 문서가 요청 시점에 만들어져야 하므로 루트 레이아웃이 `force-dynamic` 이다. 나머지 보안 헤더(HSTS, nosniff, frame-deny, referrer, permissions)는 `next.config.ts` 에 있다.
 - HTTP 로 들어온 요청은 Cloudflare 의 "항상 HTTPS 사용" 설정이 301 로 돌린다. 앱이 아니라 엣지에서 처리한다.
 - 한글 웹폰트가 전송량의 3분의 2를 차지한다. 위 **측정치** 참고.
+
+## 이스터에그 자산
+
+방향키 순서를 거꾸로 입력하면 뜨는 화면에는 제3자 저작물(Undertale 의 도트 그림과
+MEGALOVANIA)이 들어간다. 공개 저장소에 원본을 두면 배포 범위가 사이트 밖으로
+넓어지므로 `.gitignore` 로 제외했다. 새로 받은 사본에서 되살리려면 두 파일을
+직접 넣는다.
+
+| 경로 | 내용 |
+|------|------|
+| `public/images/sans.webp` | 도트 그림. 배경이 투명해야 한다 |
+| `public/audio/megalovania.mp3` | 음원. 40초 내외로 잘라 쓴다 |
+
+원본 음원을 자르고 줄이는 명령:
+
+```bash
+ffmpeg -i 원본.mp3 -t 40 -af "afade=t=out:st=38:d=2" -b:a 128k public/audio/megalovania.mp3
+```
+
+두 파일이 없어도 사이트는 정상 동작한다. 순서를 맞혔을 때 아무 일도 일어나지
+않을 뿐이다.
