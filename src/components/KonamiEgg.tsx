@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./KonamiEgg.module.css";
 
 /**
- * 물리 키 위치(`event.code`)로 판정한다.
+ * 방향키만으로 판정한다. ↑ ↑ ↓ ↓ ← → ← →
  *
- * 처음에는 `event.key` 로 비교했는데, 한글 입력 상태에서는 b 를 눌러도
- * 브라우저가 'ㅠ' 로 읽어 코드가 성립하지 않았다. `code` 는 입력기와 무관하게
- * 물리 키를 가리키므로 한영 전환 여부를 신경 쓰지 않아도 된다.
+ * 원래는 코나미 코드 그대로 B, A 로 끝냈는데 실제 키보드에서 끝까지 들어가지
+ * 않는 일이 잦았다. 한글 입력 상태에서 글자 키가 엉키는 문제를 물리 키
+ * 판정으로 고쳤는데도 마찬가지였다. 방향키는 입력기의 영향을 받지 않으므로
+ * 글자 키를 빼고 방향키만 남겼다. 외우기도 더 쉽다.
+ *
+ * 판정은 `event.code`(물리 키 위치)로 한다. 자판 배열과 무관하게 동작한다.
  */
 const SEQUENCE = [
   "ArrowUp",
@@ -19,8 +22,6 @@ const SEQUENCE = [
   "ArrowRight",
   "ArrowLeft",
   "ArrowRight",
-  "KeyB",
-  "KeyA",
 ] as const;
 
 /** `code` 를 주지 않는 환경을 위한 대체 비교값 */
@@ -29,8 +30,6 @@ const FALLBACK: Record<string, string> = {
   ArrowDown: "arrowdown",
   ArrowLeft: "arrowleft",
   ArrowRight: "arrowright",
-  KeyB: "b",
-  KeyA: "a",
 };
 
 /** 이만큼 맞히면 진행 표시를 보여 준다 */
