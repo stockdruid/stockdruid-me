@@ -4,6 +4,7 @@ import type { NextConfig } from "next";
  * 자택 서버 + Cloudflare Tunnel 운영 전제.
  * TLS는 Cloudflare가 종단하므로 여기서는 애플리케이션 레벨 헤더만 책임진다.
  */
+// Content-Security-Policy 는 요청마다 nonce 가 달라져야 하므로 middleware.ts 에서 넣는다.
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },

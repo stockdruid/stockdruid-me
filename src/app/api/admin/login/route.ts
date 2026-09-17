@@ -8,6 +8,7 @@ import {
   recordFailure,
   verifyPassword,
 } from "@/lib/auth.server";
+import { isSameOrigin } from "@/lib/origin.server";
 import { clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -16,6 +17,11 @@ export const dynamic = "force-dynamic";
 const MAX_BODY_BYTES = 4 * 1024;
 
 export async function POST(request: Request) {
+  // 다른 사이트에서 로그인 시도를 대신 보내는 것을 막는다.
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ ok: false, error: "허용되지 않은 요청입니다." }, { status: 403 });
+  }
+
   if (!isAdminConfigured()) {
     return NextResponse.json(
       { ok: false, error: "관리자 계정이 설정되지 않았습니다." },

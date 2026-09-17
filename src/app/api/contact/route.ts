@@ -3,6 +3,7 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 import type { ContactResponse } from "@/lib/contact";
 import { contactSchema } from "@/lib/contact.server";
+import { isSameOrigin } from "@/lib/origin.server";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -67,6 +68,10 @@ async function sendMail(input: {
 }
 
 export async function POST(request: Request) {
+  if (!isSameOrigin(request)) {
+    return json({ ok: false, error: "허용되지 않은 요청입니다." }, 403);
+  }
+
   const key = clientKey(request.headers);
   const limit = rateLimit(key);
 
