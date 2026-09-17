@@ -118,6 +118,11 @@ export function KonamiEgg() {
       );
     }
 
+    function isArrow(event: KeyboardEvent) {
+      if (event.code) return event.code.startsWith("Arrow");
+      return event.key.toLowerCase().startsWith("arrow");
+    }
+
     function matches(event: KeyboardEvent, step: string) {
       if (event.code === step) return true;
       // code 가 비어 있는 환경(일부 가상 키보드)에서는 key 로 비교한다.
@@ -203,10 +208,15 @@ export function KonamiEgg() {
 
       const after = Math.max(aeroStep.current, sansStep.current);
 
-      // 방향키 순서를 밟는 중에는 화면이 흔들리지 않게 한다. 첫 입력까지는
-      // 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다. 글자 키는 애초에
-      // 기본 동작이 없으므로 여기 들어오지 않는다.
-      if (before > 0 && after > 0) event.preventDefault();
+      /*
+       * 순서를 밟는 중에는 방향키로 화면이 흔들리지 않게 한다.
+       *
+       * 첫 입력까지는 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다.
+       * 대신 한 번이라도 진행 중이었다면, 이번 키에 순서가 깨지더라도
+       * 막는다. 안 그러면 틀린 순간에만 화면이 툭 내려가서 마치 그 키가
+       * 고장 난 것처럼 보인다. 실제로 그렇게 오해했다.
+       */
+      if (before > 0 && isArrow(event)) event.preventDefault();
 
       if (aeroDone) {
         setAero((v) => !v);
