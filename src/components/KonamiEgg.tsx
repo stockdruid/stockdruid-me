@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CursorTrail } from "./CursorTrail";
 import styles from "./KonamiEgg.module.css";
 
 /**
@@ -31,12 +32,21 @@ const AERO_SEQUENCE = [
 /** 정방향을 그대로 뒤집은 순서 */
 const SANS_SEQUENCE = [...AERO_SEQUENCE].reverse();
 
+/**
+ * 커서 꼬리를 켜는 순서. 물리 키 위치로 판정하므로 한글 입력 상태에서도
+ * 그대로 통한다. 화면에 보이는 글자는 ㅜㅓㅋ 가 되더라도 상관없다.
+ */
+const TRAIL_SEQUENCE = ["KeyN", "KeyJ", "KeyZ"] as const;
+
 /** `code` 를 주지 않는 환경을 위한 대체 비교값 */
 const FALLBACK: Record<string, string> = {
   ArrowUp: "arrowup",
   ArrowDown: "arrowdown",
   ArrowLeft: "arrowleft",
   ArrowRight: "arrowright",
+  KeyN: "n",
+  KeyJ: "j",
+  KeyZ: "z",
 };
 
 /** 이만큼 맞히면 진행 표시를 보여 준다 */
@@ -66,10 +76,12 @@ const SANS_VOLUME = 0.45;
 export function KonamiEgg() {
   const [aero, setAero] = useState(false);
   const [sans, setSans] = useState(false);
+  const [trail, setTrail] = useState(false);
   const [hint, setHint] = useState(0);
 
   const aeroStep = useRef(0);
   const sansStep = useRef(0);
+  const trailStep = useRef(0);
   const idle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
 
@@ -82,15 +94,18 @@ export function KonamiEgg() {
   }, []);
 
   useEffect(() => {
+    function clearSteps() {
+      aeroStep.current = 0;
+      sansStep.current = 0;
+      trailStep.current = 0;
+      setHint(0);
+    }
+
     function resetLater() {
       if (idle.current) clearTimeout(idle.current);
       if (aeroStep.current === 0 && sansStep.current === 0) return;
       // 중간까지 치다 만 상태가 남아 다음 시도를 망치지 않게 한다.
-      idle.current = setTimeout(() => {
-        aeroStep.current = 0;
-        sansStep.current = 0;
-        setHint(0);
-      }, IDLE_RESET_MS);
+      idle.current = setTimeout(clearSteps, IDLE_RESET_MS);
     }
 
     function isTyping(target: EventTarget | null) {
@@ -134,32 +149,36 @@ export function KonamiEgg() {
       if (isTyping(event.target)) return;
 
       if (event.key === "Escape") {
+        const anything = sans || aero || trail;
         if (sans) stopSans();
         if (aero) setAero(false);
-        if (sans || aero) {
-          aeroStep.current = 0;
-          sansStep.current = 0;
-          setHint(0);
+        if (trail) setTrail(false);
+        if (anything) {
+          clearSteps();
           return;
         }
       }
 
       const before = Math.max(aeroStep.current, sansStep.current);
 
-      // 두 순서를 나란히 센다. 첫 키가 서로 다르므로 동시에 완성될 일은 없다.
+      // 세 순서를 나란히 센다. 첫 키가 서로 달라 동시에 완성될 일은 없다.
       const aeroDone = advance(event, AERO_SEQUENCE, aeroStep);
       const sansDone = advance(event, SANS_SEQUENCE, sansStep);
+      const trailDone = advance(event, TRAIL_SEQUENCE, trailStep);
 
       const after = Math.max(aeroStep.current, sansStep.current);
 
-      // 순서를 밟는 중에는 방향키로 화면이 흔들리지 않게 한다.
-      // 첫 입력까지는 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다.
+      // 방향키 순서를 밟는 중에는 화면이 흔들리지 않게 한다. 첫 입력까지는
+      // 막지 않는다. 평소 방향키 스크롤을 뺏으면 안 된다. 글자 키는 애초에
+      // 기본 동작이 없으므로 여기 들어오지 않는다.
       if (before > 0 && after > 0) event.preventDefault();
 
       if (aeroDone) {
         setAero((v) => !v);
       } else if (sansDone) {
         setSans(true);
+      } else if (trailDone) {
+        setTrail((v) => !v);
       }
 
       setHint(aeroDone || sansDone ? 0 : after);
@@ -171,7 +190,7 @@ export function KonamiEgg() {
       window.removeEventListener("keydown", onKey);
       if (idle.current) clearTimeout(idle.current);
     };
-  }, [aero, sans, stopSans]);
+  }, [aero, sans, trail, stopSans]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -208,9 +227,19 @@ export function KonamiEgg() {
   }, []);
 
   const hintTotal = AERO_SEQUENCE.length;
+  const modes = [aero ? "Aero 부팅 모드" : null, trail ? "뉴진스 화이팅" : null]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <>
+      {/*
+        상시로 켜 두고 싶다면 조건을 떼고 <CursorTrail /> 만 남기면 된다.
+        기본값은 꺼짐이다. 채용 담당자가 열었을 때 커서에 글자가 줄줄
+        따라다니면 곤란하다.
+      */}
+      {trail && <CursorTrail />}
+
       {/* 절반쯤 맞히면 진행 상황을 보여 준다. 어디서 끊겼는지 알 수 있다. */}
       {!aero && !sans && hint >= HINT_FROM && (
         <div className={styles.progress} aria-hidden="true">
@@ -223,11 +252,12 @@ export function KonamiEgg() {
         </div>
       )}
 
-      {aero && !sans && (
+      {/* 켜진 모드를 한 줄에 모은다. 표시가 겹치면 읽을 수 없다. */}
+      {!sans && modes.length > 0 && (
         <div className={styles.notice} role="status">
           <span className={styles.orb} aria-hidden="true" />
           <span className={styles.text}>
-            Aero 부팅 모드
+            {modes}
             <span className={styles.hint}>Esc 로 끄기</span>
           </span>
         </div>

@@ -1,0 +1,38 @@
+/*
+ * 커서 꼬리.
+ *
+ * 화면 전체를 덮지만 입력은 하나도 가로채지 않는다. 위치는 스크립트가
+ * transform 으로만 쓴다. left/top 을 건드리면 매 프레임 레이아웃이 다시
+ * 계산된다.
+ */
+.trail {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.word {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* 첫 움직임 전에는 보이지 않는다. 화면 한가운데에 뭉쳐 있기 때문이다. */
+  opacity: 0;
+  white-space: nowrap;
+  font-size: calc(var(--text-micro) * 1.2);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  /* 뒤로 갈수록 작아지고 색이 돈다. --i 는 스크립트가 아니라 마크업이 준다. */
+  scale: calc(1 - var(--i) * 0.07);
+  color: oklch(72% 0.23 calc(var(--i) * 38));
+  text-shadow:
+    0 1px 0 oklch(100% 0 0 / 0.9),
+    0 0 10px oklch(100% 0 0 / 0.7);
+  will-change: transform;
+}
+
+.awake {
+  opacity: calc(1 - var(--i) * 0.085);
+  transition: opacity var(--dur-slow) var(--ease-glass);
+}
