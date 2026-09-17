@@ -16,6 +16,12 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=31536000; includeSubDomains",
   },
+  {
+    // 검색 결과에는 나오되 저장본은 남기지 않는다.
+    // robots 메타 태그를 읽지 않는 수집기에도 같은 신호를 준다.
+    key: "X-Robots-Tag",
+    value: "noarchive, noimageindex",
+  },
 ];
 
 const nextConfig: NextConfig = {

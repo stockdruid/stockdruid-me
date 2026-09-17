@@ -25,7 +25,13 @@ export const metadata: Metadata = {
     description: site.summary,
   },
   alternates: { canonical: site.url },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    // 검색 결과에 저장본이 남지 않도록 한다. 내용을 고쳐도 과거 판이 남는 것을 막는다.
+    noarchive: true,
+    nocache: true,
+  },
 };
 
 export const viewport: Viewport = {
